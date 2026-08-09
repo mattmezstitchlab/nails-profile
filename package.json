@@ -1,0 +1,23 @@
+{
+  "name": "nail-profile",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Nail Profile — La première plateforme d'ongles sur mesure par IA",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.3",
+    "vite": "^5.4.11",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
+  }
+}

@@ -1,4 +1,5 @@
 import { db } from "@/db";
+export const dynamic = "force-dynamic";
 import { sql } from "drizzle-orm";
 
 export async function GET() {

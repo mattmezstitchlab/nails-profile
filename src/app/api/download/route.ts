@@ -1,4 +1,5 @@
 import { readFile } from "fs/promises";
+export const dynamic = "force-dynamic";
 import { join } from "path";
 
 export async function GET() {

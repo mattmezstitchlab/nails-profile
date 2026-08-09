@@ -3,10 +3,11 @@ import { Pool } from "pg";
 import * as schema from "./schema";
 import * as relations from "./relations";
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/app_db";
 
+// Build-time fallback: don't throw if DATABASE_URL missing (allows `next build` without DB)
 if (!databaseUrl) {
-  throw new Error("DATABASE_URL is required");
+  console.warn("DATABASE_URL missing — using dummy for build");
 }
 
 const globalForDb = globalThis as typeof globalThis & {

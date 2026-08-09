@@ -1,4 +1,5 @@
 import { db } from "@/db";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   const collections = await db.query.collections.findMany({

@@ -1,4 +1,5 @@
 import { db } from "@/db";
+export const dynamic = "force-dynamic";
 import { designSets, nailProfiles, orders, users } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 

@@ -1,52 +1,142 @@
-# Nail Profile — La première plateforme d'ongles sur mesure par IA
+# NAIL PROFILE
 
 **Tes ongles. Ton design. Ton format.**
 
-Scanne tes mains. L'IA mesure tes ongles, crée un profil unique et compose un set de designs qui s'adaptent exactement à toi.
-
-![Nail Profile](https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1200&q=80&auto=format&fit=crop)
-
-## Concept
-
-> Un ongle n'est pas un écran. C'est une forme.
-
-Les outils actuels génèrent des images de nail art. **Nail Profile** est différent : nous créons un modèle numérique de tes vrais ongles, puis chaque design y est dessiné directement. Pas de simulacre. Pas d'approximation.
-
-## Fonctionnalités
-
-- **Tes mains — Scannées, pas devinées.** Détection des 10 ongles, mesure millimétrique, Nail Profile permanent.
-- **Ton design — Composé pour toi.** Génération doigt par doigt, cohérence artistique + dimensions réelles.
-- **Ton format — Adapté à tous les profils.** 1 création → 10 versions selon ton Nail Profile.
-
-## Processus (5 étapes)
-
-1. **Tes mains deviennent des données** — photo, détection, mesure (largeur/longueur/courbure)
-2. **Un Nail Profile, pour toujours** — 10 gabarits enregistrés
-3. **L'IA compose** — génération sur mesure
-4. **Tu prévisualises** — rendu 3D réaliste
-5. **On fabrique** — impression haute précision, livraison 48h
-
-## Stack
-
-- Vite + React 18
-- Tailwind CSS
-- Déploiement statique (Vercel / Netlify / GitHub Pages)
-
-## Lancer en local
-
-```bash
-npm install
-npm run dev      # http://localhost:5173
-npm run build
-npm run preview
-```
-
-## Déploiement GitHub → Vercel
-
-1. Push sur `main`
-2. Importer le repo dans Vercel (framework: Vite)
-3. Build command: `npm run build`, Output: `dist`
+La première plateforme de personnalisation d'ongles par IA. Scanne tes mains, l'IA mesure tes ongles et crée un Nail Profile unique. Chaque design est ensuite adapté à tes dimensions réelles — pas à un modèle générique.
 
 ---
 
-© 2026 Nail Profile
+## Le concept
+
+Un ongle n'est pas un écran. C'est une forme.
+
+Les outils actuels génèrent des images de nail art. Nail Profile est différent : nous créons un modèle numérique de tes vrais ongles, puis chaque design y est dessiné directement. Pas de simulacre. Pas d'approximation. Un vrai produit, pensé pour toi.
+
+---
+
+## Fonctionnalités
+
+### Scan & Profil
+- Scan IA haute précision des 10 ongles
+- Détection automatique des formes, dimensions et orientations
+- Nail Profile permanent réutilisable pour toutes les créations
+- Correction manuelle des contours
+
+### Studio de Création
+- Prompt libre en langage naturel
+- Import d'images d'inspiration (photo, URL, palette)
+- 12 styles rapides (Minimal, French, Chrome, Luxury, Floral, Gothic, Kawaii, Y2K, Nature, Wedding, Art, Abstract)
+- Génération d'un set de 10 designs cohérents
+- Régénération individuelle d'un ongle
+
+### Try-On & Commande
+- Visualisation sur tes mains avec avant/après
+- Zoom, rotation et changement de lumière
+- Vérification de fabricabilité avant commande
+- Finitions : Brillante, Mate, Chrome, Métallique
+- Formes : Naturelle, Almond, Oval, Square, Coffin
+- Commande persistée dans PostgreSQL
+
+### Marketplace
+- Explorer des créations de la communauté
+- Filtres par collection (Mariage, Minimal, Chrome, Art, Festival, Nature, Gothic, Y2K, Saisons)
+- Fiche produit avec visuel réel, try-on et commande
+- Design paramétrique : chaque création s'adapte au Nail Profile de chaque acheteur
+
+### Créateur
+- Publier ses créations (Privé / Public / Créateur)
+- Tableau de bord : vues, essais, commandes, revenus
+- Commission sur les ventes
+
+---
+
+## Architecture technique
+
+- **Framework** : Next.js 16 (App Router)
+- **Base de données** : PostgreSQL via Drizzle ORM
+- **Style** : Tailwind CSS 4
+- **Langage** : TypeScript strict
+- **Pictogrammes** : Lucide React (linéaires)
+- **Visuels** : Images locales haute qualité dans `public/images/`
+
+### Structure des tables
+
+- `users` — Comptes utilisateurs
+- `nail_profiles` — Profils de scan
+- `nails` — 10 ongles individuels avec dimensions
+- `design_sets` — Sets de 10 designs
+- `designs` — Designs individuels par ongle
+- `orders` — Commandes
+- `favorites` — Favoris
+- `collections` — Collections thématiques
+- `collection_designs` — Liaison collections/designs
+- `inspirations` — Images d'inspiration uploadées
+
+### API Routes
+
+- `GET /api/health` — Healthcheck
+- `GET /api/profile` — Nail Profile de l'utilisateur
+- `GET /api/designs` — Marketplace
+- `POST /api/designs` — Publier une création
+- `GET /api/designs/[id]` — Détail d'un design
+- `GET /api/collections` — Collections
+- `GET /api/orders` — Historique des commandes
+- `POST /api/orders` — Créer une commande
+
+---
+
+## Pages
+
+| Route | Description |
+|---|---|
+| `/` | Landing immersive avec hero visuel et storytelling |
+| `/scan` | Scan des mains |
+| `/scan/extraction` | Extraction et correction des ongles |
+| `/scan/profile` | Nail Profile avec les 10 gabarits |
+| `/canvas` | Nail Canvas (mode Main / Canvas) |
+| `/create` | AI Design Studio |
+| `/create/result` | Set de 10 designs générés |
+| `/create/fabricability` | Vérification de fabrication |
+| `/create/publish` | Publier dans la marketplace |
+| `/try-on` | Try-On interactif |
+| `/checkout` | Commande |
+| `/explore` | Marketplace |
+| `/explore/[id]` | Fiche produit |
+| `/my-creations` | Galerie personnelle |
+| `/orders` | Historique des commandes |
+| `/creator` | Tableau de bord créateur |
+| `/profile` | Profil utilisateur |
+
+---
+
+## Démarrage
+
+```bash
+npm install
+cp .env.example .env  # configurer DATABASE_URL
+npx drizzle-kit push   # appliquer le schéma
+npx tsx src/db/seed.ts # injecter les données de test
+npm run dev
+```
+
+---
+
+## Design direction
+
+- Fond ivoire `#fbfaf8`
+- Noir profond `#101010`
+- Rose unique `#e62e6b`
+- Pictogrammes linéaires modernes (Lucide)
+- Aucun dégradé
+- Aucun emoji
+- Aucun picto étoile
+- Vrais visuels de mains et manucures
+- Typographie Inter
+- Coins arrondis
+- Mobile-first, responsive desktop
+
+---
+
+## Licence
+
+© NAIL PROFILE 2026

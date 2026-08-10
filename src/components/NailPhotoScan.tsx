@@ -187,6 +187,22 @@ export default function NailPhotoScan({ onScan }: Props) {
         imageHeight: imageEl.height,
       };
       setResult(scanResult);
+      // Persist the original image as a data URL so /create/result can
+      // composite the design on top of it. We draw the image into a
+      // throwaway canvas because HTMLImageElement has no toDataURL.
+      try {
+        const tmp = document.createElement("canvas");
+        tmp.width = imageEl.width;
+        tmp.height = imageEl.height;
+        const tctx = tmp.getContext("2d");
+        if (tctx) {
+          tctx.drawImage(imageEl, 0, 0);
+          const dataUrl = tmp.toDataURL("image/jpeg", 0.8);
+          if (dataUrl) sessionStorage.setItem("photoScanDataUrl", dataUrl);
+        }
+      } catch {
+        // sessionStorage plein — on s'en passe
+      }
       onScan(scanResult);
     } catch (err) {
       console.error("[NailPhotoScan] failed", err);

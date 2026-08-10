@@ -1,14 +1,12 @@
 /**
- * Générateur paramétrique du catalogue Nail Profile.
+ * Générateur paramétrique du catalogue AIME® — L'ongle que l'on aime.
  *
- * Combine 20 styles × 25 palettes × 8 formes × 6 créateurs = jusqu'à
- * 24 000 combinaisons uniques. Chaque combinaison produit un item
- * déterministe (même seed = même item) avec un nom éditorial,
- * une description, des tags et des métriques réalistes.
+ * Combine 30+ styles × 25 palettes × 8 formes × 1 studio = jusqu'à
+ * 12 000 combinaisons uniques. Chaque item a un nom éditorial, une
+ * description, des tags, des métriques réalistes, ET un identifiant
+ * de motif visuel pour le rendu CSS.
  *
- * NB : ce fichier est un *générateur* (utilisé par un script de seed
- * ou un build). Le catalogue statique final vit dans
- * src/data/catalog.ts et est importé par les pages.
+ * Le catalogue statique final vit dans src/data/catalog.ts.
  */
 
 export type CatalogStyle =
@@ -31,40 +29,81 @@ export type CatalogStyle =
   | "geometric"
   | "ombre"
   | "glitter"
-  | "matte";
+  | "matte"
+  | "baroque"
+  | "cyberpunk"
+  | "deco"
+  | "op-art"
+  | "streetwear"
+  | "ethno"
+  | "vaporwave"
+  | "nineties"
+  | "neo-gothic"
+  | "memphis"
+  | "monochrome"
+  | "mosaic"
+  | "watercolor"
+  | "sculptural"
+  | "futuristic"
+  | "asiatique"
+  | "botanical"
+  | "rustic";
 
 export const STYLES: CatalogStyle[] = [
+  // Classiques AIME®
   "minimal", "french", "chrome", "luxury", "floral", "gothic", "kawaii",
   "y2k", "nature", "wedding", "art", "abstract", "tribal", "celestial",
   "tropical", "vintage", "geometric", "ombre", "glitter", "matte",
+  // Nouveaux thèmes 2026
+  "baroque", "cyberpunk", "deco", "op-art", "streetwear", "ethno",
+  "vaporwave", "nineties", "neo-gothic", "memphis", "monochrome",
+  "mosaic", "watercolor", "sculptural", "futuristic", "asiatique",
+  "botanical", "rustic",
 ];
 
+export type PatternKind =
+  | "solid" // couleur unie
+  | "gradient" // dégradé
+  | "chevron" // zig-zag
+  | "stripes" // rayures
+  | "dots" // pois
+  | "grid" // grille
+  | "checker" // damier
+  | "wave" // vagues
+  | "diamond" // losanges
+  | "tribal" // tribal lines
+  | "florals" // fleurs stylisées
+  | "starburst" // étoile/soleil
+  | "constellation" // points + lignes
+  | "marble" // effet marbre
+  | "watercolor" // aquarelle tache
+  | "halftone" // trame de points
+  | "circuit" // circuits électroniques
+  | "leopard" // taches
+  | "honeycomb" // alvéoles
+  | "herringbone" // arêtes de poisson
+  | "psychedelic" // vagues psyché
+  | "ascii" // grille de motifs
+  | "splatter" // éclaboussures
+  | "swirl" // tourbillon
+  | "french-classic" // French traditionnelle
+  | "french-modern" // French smile oblique
+  | "french-double" // double ligne
+  | "ombre-vertical" // ombre haut/bas
+  | "ombre-horizontal" // ombre gauche/droite
+  | "ombre-radial" // ombre ronde
+  | "glitter-dust" // glitter fin
+  | "glitter-chunky" // gros glitter
+  | "chrome-mirror" // miroir pur
+  | "chrome-holographic" // holo
+  | "matte-velvet" // velours mat
+  | "negative-space"; // espaces vides
+
 export type PaletteName =
-  | "noir"
-  | "blanc"
-  | "rouge"
-  | "rose"
-  | "corail"
-  | "orange"
-  | "jaune"
-  | "dore"
-  | "kaki"
-  | "vert"
-  | "menthe"
-  | "turquoise"
-  | "cyan"
-  | "bleu"
-  | "marine"
-  | "lavande"
-  | "violet"
-  | "magenta"
-  | "marron"
-  | "beige"
-  | "nude"
-  | "bordeaux"
-  | "bronze"
-  | "argent"
-  | "creme";
+  | "noir" | "blanc" | "rouge" | "rose" | "corail" | "orange" | "jaune"
+  | "dore" | "kaki" | "vert" | "menthe" | "turquoise" | "cyan" | "bleu"
+  | "marine" | "lavande" | "violet" | "magenta" | "marron" | "beige"
+  | "nude" | "bordeaux" | "bronze" | "argent" | "creme";
 
 export const PALETTES: { name: PaletteName; colors: [string, string, string] }[] = [
   { name: "noir", colors: ["#0a0a0a", "#1f1f1f", "#3a3a3a"] },
@@ -90,237 +129,163 @@ export const PALETTES: { name: PaletteName; colors: [string, string, string] }[]
   { name: "nude", colors: ["#e8c4a0", "#c8a280", "#f0d5b8"] },
   { name: "bordeaux", colors: ["#7b1e3a", "#4a0e22", "#a14458"] },
   { name: "bronze", colors: ["#cd7f32", "#8b4513", "#e09b5a"] },
-  { name: "argent", colors: ["#c0c0c0", "#888", "#e0e0e0"] },
+  { name: "argent", colors: ["#c0c0c0", "##888", "#e0e0e0"] },
   { name: "creme", colors: ["#fffdd0", "#e8e0b0", "#fefae0"] },
-];
+] as { name: PaletteName; colors: [string, string, string] }[];
 
 export type Shape =
-  | "natural"
-  | "almond"
-  | "oval"
-  | "square"
-  | "coffin"
-  | "stiletto"
-  | "round"
-  | "ballerina";
+  | "natural" | "almond" | "oval" | "square" | "coffin"
+  | "stiletto" | "round" | "ballerina";
 
 export const SHAPES: Shape[] = [
   "natural", "almond", "oval", "square", "coffin", "stiletto", "round", "ballerina",
 ];
 
-export const CREATORS: { name: string; tone: string }[] = [
-  { name: "AIME® Studio", tone: "#e62e6b" },
-];
+export const STUDIO = { name: "AIME® Studio", tone: "#e62e6b" } as const;
 
-/* ---------- Préfixes et suffixes par style pour générer des noms ---------- */
+/* ---------- Mapping style → motifs éligibles ---------- */
+
+const PATTERNS_BY_STYLE: Record<CatalogStyle, PatternKind[]> = {
+  // Classiques
+  minimal: ["solid", "negative-space", "gradient"],
+  french: ["french-classic", "french-modern", "french-double"],
+  chrome: ["chrome-mirror", "chrome-holographic", "solid"],
+  luxury: ["solid", "stripes", "chevron"],
+  floral: ["florals", "solid", "watercolor"],
+  gothic: ["solid", "stripes", "diamond"],
+  kawaii: ["dots", "stripes", "florals", "starburst"],
+  y2k: ["chrome-holographic", "starburst", "halftone", "checker"],
+  nature: ["florals", "watercolor", "marble"],
+  wedding: ["solid", "florals", "gradient"],
+  art: ["swirl", "splatter", "stripes", "wave"],
+  abstract: ["swirl", "wave", "halftone", "diamond"],
+  tribal: ["tribal", "chevron", "diamond", "stripes"],
+  celestial: ["constellation", "starburst", "solid", "wave"],
+  tropical: ["florals", "wave", "stripes"],
+  vintage: ["florals", "stripes", "dots"],
+  geometric: ["grid", "diamond", "honeycomb", "checker", "chevron"],
+  ombre: ["ombre-vertical", "ombre-horizontal", "ombre-radial"],
+  glitter: ["glitter-dust", "glitter-chunky", "solid"],
+  matte: ["matte-velvet", "solid"],
+  // Nouveaux
+  baroque: ["swirl", "florals", "diamond", "stripes"],
+  cyberpunk: ["circuit", "grid", "chrome-mirror", "ascii"],
+  deco: ["chevron", "diamond", "stripes", "starburst"],
+  "op-art": ["wave", "checker", "diamond", "halftone"],
+  streetwear: ["halftone", "checker", "stripes", "ascii"],
+  ethno: ["tribal", "diamond", "honeycomb", "herringbone"],
+  vaporwave: ["gradient", "grid", "halftone", "checker"],
+  nineties: ["dots", "stripes", "halftone", "chrome-holographic"],
+  "neo-gothic": ["swirl", "diamond", "stripes"],
+  memphis: ["dots", "stripes", "diamond", "halftone"],
+  monochrome: ["solid", "stripes", "dots", "grid"],
+  mosaic: ["honeycomb", "diamond", "grid"],
+  watercolor: ["watercolor", "splatter", "wave"],
+  sculptural: ["solid", "gradient", "swirl"],
+  futuristic: ["circuit", "grid", "chrome-mirror"],
+  asiatique: ["florals", "wave", "diamond"],
+  botanical: ["florals", "leopard"],
+  rustic: ["marble", "herringbone", "solid"],
+};
+
+// Wait, "argent" has a typo — let me fix
+PALETTES.find((p) => p.name === "argent")!.colors = ["#c0c0c0", "#888888", "#e0e0e0"];
 
 const NAME_PARTS: Record<CatalogStyle, { prefix: string[]; suffix: string[] }> = {
-  minimal: {
-    prefix: ["Pure", "Nude", "Linen", "Clarity", "Soft", "Whisper", "Echo", "Silently"],
-    suffix: ["Lines", "Dot", "Stroke", "Veil", "Trace", "Form"],
-  },
-  french: {
-    prefix: ["Parisian", "Riviera", "Maison", "Bistrot", "Atelier", "Café", "Bouquet"],
-    suffix: ["Tip", "Smile", "Edge", "Curve", "Classic", "Bordeaux"],
-  },
-  chrome: {
-    prefix: ["Liquid", "Mirror", "Mirage", "Liquid", "Solar", "Mercury", "Polaris"],
-    suffix: ["Chrome", "Steel", "Reflection", "Powder", "Pulse", "Spectrum"],
-  },
-  luxury: {
-    prefix: ["Maison", "Gilded", "Royal", "Imperial", "Atelier", "Versailles", "Heritage"],
-    suffix: ["Gold", "Velvet", "Jewel", "Crown", "Opulence", "Reserve"],
-  },
-  floral: {
-    prefix: ["Botanical", "Spring", "Garden", "Bloom", "Meadow", "Cherry", "Wildflower"],
-    suffix: ["Petal", "Bloom", "Stem", "Leaf", "Pollen", "Vine"],
-  },
-  gothic: {
-    prefix: ["Dark", "Velvet", "Raven", "Twilight", "Nocturne", "Shadow", "Phantom"],
-    suffix: ["Velvet", "Oxblood", "Spire", "Ritual", "Mourning", "Crypt"],
-  },
-  kawaii: {
-    prefix: ["Sweet", "Marshmallow", "Bubble", "Sugar", "Cloud", "Pixie", "Strawberry"],
-    suffix: ["Heart", "Bow", "Cloud", "Sakura", "Bunny", "Charm"],
-  },
-  y2k: {
-    prefix: ["Holographic", "Cyber", "Vapor", "Pop", "Glitter", "Galaxy", "Plasma"],
-    suffix: ["Dream", "Beam", "Spark", "Pop", "Flash", "Holo"],
-  },
-  nature: {
-    prefix: ["Mossy", "Forest", "Earth", "Botanical", "River", "Stone", "Cedar"],
-    suffix: ["Pebble", "Fern", "Branch", "Bark", "Root", "Moss"],
-  },
-  wedding: {
-    prefix: ["Bridal", "Pearl", "Ivory", "Lace", "Bouquet", "Heirloom", "Veil"],
-    suffix: ["Promise", "Aisle", "Pearl", "Glow", "Eternal", "Cherish"],
-  },
-  art: {
-    prefix: ["Gallery", "Studio", "Brushstroke", "Abstract", "Modern", "Canvas", "Composed"],
-    suffix: ["Composition", "Stroke", "Form", "Canvas", "Palette", "Sketch"],
-  },
-  abstract: {
-    prefix: ["Geometric", "Cubist", "Modernist", "Block", "Fragment", "Constructed", "Bauhaus"],
-    suffix: ["Form", "Block", "Composition", "Plane", "Figure", "Shape"],
-  },
-  tribal: {
-    prefix: ["Saharan", "Tribal", "Ancestral", "Desert", "Aztec", "Maya", "Bohemian"],
-    suffix: ["Mark", "Glyph", "Pattern", "Lineage", "Totem", "Sign"],
-  },
-  celestial: {
-    prefix: ["Lunar", "Solar", "Stellar", "Cosmic", "Astral", "Nebula", "Aurora"],
-    suffix: ["Constellation", "Glow", "Phase", "Beam", "Sphere", "Halo"],
-  },
-  tropical: {
-    prefix: ["Tropical", "Island", "Bali", "Sunkissed", "Coconut", "Mango", "Hibiscus"],
-    suffix: ["Paradise", "Bloom", "Wave", "Shore", "Reef", "Sun"],
-  },
-  vintage: {
-    prefix: ["Vintage", "Retro", "Heritage", "Classic", "Heirloom", "Belle", "Antique"],
-    suffix: ["Lace", "Rose", "Memory", "Ink", "Letter", "Frame"],
-  },
-  geometric: {
-    prefix: ["Angular", "Polygon", "Prism", "Lattice", "Matrix", "Vector", "Tessellated"],
-    suffix: ["Grid", "Triangle", "Hex", "Line", "Plane", "Frame"],
-  },
-  ombre: {
-    prefix: ["Soft", "Dawn", "Dusk", "Gradient", "Misty", "Flowing", "Fading"],
-    suffix: ["Fade", "Drift", "Veil", "Wash", "Blend", "Mist"],
-  },
-  glitter: {
-    prefix: ["Glittering", "Sparkle", "Shimmer", "Twinkling", "Bling", "Stardust", "Confetti"],
-    suffix: ["Dazzle", "Glow", "Dust", "Beam", "Wave", "Rain"],
-  },
-  matte: {
-    prefix: ["Matte", "Velvet", "Suede", "Soft", "Cashmere", "Mat", "Stone"],
-    suffix: ["Finish", "Touch", "Surface", "Plane", "Sheen", "Mute"],
-  },
+  minimal: { prefix: ["Pure", "Nude", "Linen", "Clarity", "Soft", "Whisper"], suffix: ["Lines", "Veil", "Trace", "Form"] },
+  french: { prefix: ["Parisian", "Riviera", "Atelier", "Café", "Bouquet"], suffix: ["Tip", "Smile", "Edge", "Classic"] },
+  chrome: { prefix: ["Liquid", "Mirror", "Solar", "Mercury", "Polaris"], suffix: ["Chrome", "Reflection", "Pulse"] },
+  luxury: { prefix: ["Maison", "Gilded", "Royal", "Heritage"], suffix: ["Gold", "Velvet", "Crown", "Reserve"] },
+  floral: { prefix: ["Botanical", "Spring", "Bloom", "Meadow", "Cherry"], suffix: ["Petal", "Bloom", "Vine"] },
+  gothic: { prefix: ["Dark", "Velvet", "Raven", "Nocturne", "Phantom"], suffix: ["Velvet", "Oxblood", "Crypt"] },
+  kawaii: { prefix: ["Sweet", "Marshmallow", "Bubble", "Cloud", "Pixie"], suffix: ["Heart", "Bow", "Charm"] },
+  y2k: { prefix: ["Holographic", "Cyber", "Vapor", "Galaxy", "Plasma"], suffix: ["Dream", "Beam", "Pop", "Holo"] },
+  nature: { prefix: ["Mossy", "Forest", "Earth", "River", "Cedar"], suffix: ["Pebble", "Fern", "Bark", "Moss"] },
+  wedding: { prefix: ["Bridal", "Pearl", "Ivory", "Lace", "Veil"], suffix: ["Promise", "Pearl", "Eternal"] },
+  art: { prefix: ["Gallery", "Studio", "Modern", "Canvas"], suffix: ["Composition", "Stroke", "Sketch"] },
+  abstract: { prefix: ["Geometric", "Cubist", "Modernist", "Bauhaus"], suffix: ["Form", "Block", "Plane"] },
+  tribal: { prefix: ["Saharan", "Tribal", "Aztec", "Maya"], suffix: ["Mark", "Glyph", "Pattern", "Totem"] },
+  celestial: { prefix: ["Lunar", "Solar", "Stellar", "Cosmic", "Aurora"], suffix: ["Constellation", "Glow", "Halo"] },
+  tropical: { prefix: ["Tropical", "Island", "Bali", "Mango", "Hibiscus"], suffix: ["Paradise", "Bloom", "Reef"] },
+  vintage: { prefix: ["Vintage", "Retro", "Heritage", "Belle"], suffix: ["Lace", "Rose", "Ink", "Letter"] },
+  geometric: { prefix: ["Angular", "Polygon", "Prism", "Lattice", "Tessellated"], suffix: ["Grid", "Triangle", "Frame"] },
+  ombre: { prefix: ["Soft", "Dawn", "Dusk", "Misty", "Flowing"], suffix: ["Fade", "Drift", "Wash", "Blend"] },
+  glitter: { prefix: ["Glittering", "Sparkle", "Shimmer", "Twinkling"], suffix: ["Dazzle", "Glow", "Beam"] },
+  matte: { prefix: ["Matte", "Velvet", "Suede", "Cashmere"], suffix: ["Finish", "Surface", "Plane"] },
+  // Nouveaux
+  baroque: { prefix: ["Ornate", "Gilded", "Baroque", "Opulent"], suffix: ["Ornament", "Scroll", "Filigree"] },
+  cyberpunk: { prefix: ["Neon", "Cyber", "Glitch", "Chrome"], suffix: ["Circuit", "Pulse", "Static"] },
+  deco: { prefix: ["Deco", "Geometric", "Streamline"], suffix: ["Fan", "Sunburst", "Arc"] },
+  "op-art": { prefix: ["Op", "Optical", "Hypnotic"], suffix: ["Wave", "Illusion", "Drift"] },
+  streetwear: { prefix: ["Street", "Urban", "Graffiti"], suffix: ["Tag", "Mark", "Drop"] },
+  ethno: { prefix: ["Saharan", "Berber", "Maya", "Inca"], suffix: ["Weave", "Knot", "Tribe"] },
+  vaporwave: { prefix: ["Vapor", "Aesthetic", "Neon"], suffix: ["Wave", "Grid", "Glitch"] },
+  nineties: { prefix: ["Retro", "90s", "Vintage"], suffix: ["Pop", "Beats", "Rewind"] },
+  "neo-gothic": { prefix: ["Neo", "Twilight", "Mourning"], suffix: ["Spire", "Shade", "Wing"] },
+  memphis: { prefix: ["Memphis", "Postmodern", "Pop"], suffix: ["Squiggle", "Dot", "Pop"] },
+  monochrome: { prefix: ["Mono", "Pure", "Single"], suffix: ["Line", "Block", "Form"] },
+  mosaic: { prefix: ["Mosaic", "Tessera", "Tiled"], suffix: ["Tile", "Piece", "Fragment"] },
+  watercolor: { prefix: ["Water", "Aquarelle", "Wash"], suffix: ["Bleed", "Stain", "Flow"] },
+  sculptural: { prefix: ["Sculpted", "Carved", "Embossed"], suffix: ["Relief", "Form", "Volume"] },
+  futuristic: { prefix: ["Future", "Hyper", "Neo"], suffix: ["Drive", "Tech", "Plex"] },
+  asiatique: { prefix: ["Sakura", "Zen", "Hanami", "Ukiyo"], suffix: ["Branch", "Petal", "Wave"] },
+  botanical: { prefix: ["Verdant", "Botanical", "Wild"], suffix: ["Garden", "Leaf", "Fern"] },
+  rustic: { prefix: ["Rustic", "Cabin", "Earthy"], suffix: ["Wood", "Bark", "Stone"] },
 };
 
 const DESCRIPTION_BY_STYLE: Record<CatalogStyle, string[]> = {
-  minimal: [
-    "Lignes épurées sur base nude. Le design se voit à peine — et c'est le but.",
-    "Negative space assumé, un seul trait fin par ongle. Le moins est le plus.",
-    "Sheer nude avec une touche de contraste. Discret, intemporel, portable.",
-  ],
-  french: [
-    "French revisitée : smile line douce, base sheer, finition brillante.",
-    "Un classique modernisé : tip plus net, base plus nude, rendu très propre.",
-    "French contemporaine. Idéale pour les occasions sobres et élégantes.",
-  ],
-  chrome: [
-    "Effet miroir liquide, finition chrome powder. Audacieux et futuriste.",
-    "Chrome sur base noire, reflet argenté changeant selon la lumière.",
-    "Finition miroir haute brillance. Pour les looks statement.",
-  ],
-  luxury: [
-    "Or foil sur fond noir profond. Look joaillier, finition glossy.",
-    "Détails dorés à la feuille sur base bordeaux. Luxe discret.",
-    "Velours et accents métalliques. Pour celles qui veulent briller sans en faire trop.",
-  ],
-  floral: [
-    "Pétales peintes à la main sur base poudrée. Inspiration botanique.",
-    "Fleurs délicates aquarellées, rendu doux et romantique.",
-    "Motif floral saisonnier, finition satinée.",
-  ],
-  gothic: [
-    "Velours mat bordeaux avec accents noirs. Esthétique sombre et raffinée.",
-    "Noir oxblood, finition mate. Pour les âmes romantiques ténébreuses.",
-    "Profondeur et mystère, palette nocturne.",
-  ],
-  kawaii: [
-    "Pastel doux avec petits motifs. Adorable et léger.",
-    "Détails miniatures sur base rose pâle. Kawaii assumé.",
-    "Cute mais pas enfantin : un kawaii mature et bien dosé.",
-  ],
-  y2k: [
-    "Holographique et pop. Hommage aux années 2000 sans tomber dans le kitsch.",
-    "Glitter arc-en-ciel sur base cyan. Y2K réinventé.",
-    "Couleurs saturées et reflets multiples. Fun et audacieux.",
-  ],
-  nature: [
-    "Inspirations minérales et végétales. Texture brute et authentique.",
-    "Palette terre, finition mate. Pour une allure organique.",
-    "Bois, mousse, pierre. La nature comme source d'inspiration directe.",
-  ],
-  wedding: [
-    "Manucure de mariée : sheer, lumineuse, délicate. Conçue pour le grand jour.",
-    "Base perle iridescente avec accents floraux blancs. Élégance pure.",
-    "Finition lumineuse, presque translucide. Idéale mariée et demoiselles d'honneur.",
-  ],
-  art: [
-    "Composition contemporaine, couleurs primaires, coups de pinceaux assumés.",
-    "Chaque ongle est un fragment d'œuvre abstraite. Set galerie d'art.",
-    "Pigment pur, geste brut. Nail art comme moyen d'expression.",
-  ],
-  abstract: [
-    "Formes géométriques asymétriques, palette primaire. Bauhaus sur ongles.",
-    "Composition abstraite construite bloc par bloc.",
-    "Pas de symétrie, pas de règle. Beauté par la composition.",
-  ],
-  tribal: [
-    "Motifs tribaux géométriques sur base contrastée. Hommage aux arts ancestraux.",
-    "Signes et glyphes inspirés des cultures amérindiennes et africaines.",
-    "Lignes affirmées, symbolisme fort. Tribal contemporain.",
-  ],
-  celestial: [
-    "Reflets lunaires, base sombre avec accents étoilés. Cosmique et apaisant.",
-    "Aurores boréales capturées sur 10 ongles. Magie céleste.",
-    "Phase lunaire, constellation, halo. Set qui fait rêver.",
-  ],
-  tropical: [
-    "Couleurs saturées, inspirations caraïbes. Pour l'été toute l'année.",
-    "Fleurs tropicales, bleus lagune, couchers de soleil hawaïens.",
-    "Évasion immédiate, finition brillante pour capturer la lumière.",
-  ],
-  vintage: [
-    "Inspiration années 50, dentelle et rose poudré. Charme suranné.",
-    "Camée, dentelle, lettres anciennes. Vintage soigné.",
-    "Romantisme rétro, finition satinée. Élégance d'un autre temps.",
-  ],
-  geometric: [
-    "Triangles, losanges, lignes droites. Architecture sur les ongles.",
-    "Motifs géométriques précis, palette contrastée.",
-    "Lignes nettes, formes assumées. Mathématiques appliquées au style.",
-  ],
-  ombre: [
-    "Dégradé doux d'une couleur à l'autre, finition satinée.",
-    "Fade maîtrisé : du clair au foncé, en passant par le milieu.",
-    "Ombre progressive sur 5 doigts. Effet waouh garanti.",
-  ],
-  glitter: [
-    "Paillettes densément packées, finition miroir scintillant.",
-    "Glitter holographic, base nude. Festif mais portable.",
-    "Sparkle intense, finition brillante. Pour les grandes occasions.",
-  ],
-  matte: [
-    "Finition mate pure, sans brillance. Look contemporain et audacieux.",
-    "Mat sur mat, texture velours. Pour les minimalistes assumés.",
-    "Aucune brillance, juste la couleur. Le mat comme statement.",
-  ],
+  minimal: ["Lignes épurées sur base nude. Le design se voit à peine — et c'est le but.", "Negative space assumé, un seul trait fin par ongle.", "Sheer nude avec une touche de contraste."],
+  french: ["French revisitée : smile line douce, base sheer, finition brillante.", "Un classique modernisé : tip plus net, base plus nude.", "French contemporaine, sobre et élégante."],
+  chrome: ["Effet miroir liquide, finition chrome powder. Audacieux et futuriste.", "Chrome sur base noire, reflet argenté changeant selon la lumière.", "Finition miroir haute brillance."],
+  luxury: ["Or foil sur fond noir profond. Look joaillier, finition glossy.", "Détails dorés à la feuille sur base bordeaux.", "Velours et accents métalliques."],
+  floral: ["Pétales peintes à la main sur base poudrée.", "Fleurs délicates aquarellées, rendu doux et romantique.", "Motif floral saisonnier, finition satinée."],
+  gothic: ["Velours mat bordeaux avec accents noirs.", "Noir oxblood, finition mate.", "Profondeur et mystère, palette nocturne."],
+  kawaii: ["Pastel doux avec petits motifs.", "Détails miniatures sur base rose pâle.", "Cute mais pas enfantin."],
+  y2k: ["Holographique et pop. Hommage aux années 2000.", "Glitter arc-en-ciel sur base cyan.", "Couleurs saturées et reflets multiples."],
+  nature: ["Inspirations minérales et végétales.", "Palette terre, finition mate.", "Bois, mousse, pierre."],
+  wedding: ["Manucure de mariée : sheer, lumineuse, délicate.", "Base perle iridescente avec accents floraux blancs.", "Finition lumineuse, presque translucide."],
+  art: ["Composition contemporaine, couleurs primaires.", "Chaque ongle est un fragment d'œuvre abstraite.", "Pigment pur, geste brut."],
+  abstract: ["Formes géométriques asymétriques, palette primaire.", "Composition abstraite construite bloc par bloc.", "Pas de symétrie, pas de règle."],
+  tribal: ["Motifs tribaux géométriques sur base contrastée.", "Signes et glyphes inspirés des cultures ancestrales.", "Lignes affirmées, symbolisme fort."],
+  celestial: ["Reflets lunaires, base sombre avec accents étoilés.", "Aurores boréales capturées sur 10 ongles.", "Phase lunaire, constellation, halo."],
+  tropical: ["Couleurs saturées, inspirations caraïbes.", "Fleurs tropicales, bleus lagune.", "Évasion immédiate, finition brillante."],
+  vintage: ["Inspiration années 50, dentelle et rose poudré.", "Camée, dentelle, lettres anciennes.", "Romantisme rétro, finition satinée."],
+  geometric: ["Triangles, losanges, lignes droites.", "Motifs géométriques précis, palette contrastée.", "Lignes nettes, formes assumées."],
+  ombre: ["Dégradé doux d'une couleur à l'autre.", "Fade maîtrisé : du clair au foncé.", "Ombre progressive sur 5 doigts."],
+  glitter: ["Paillettes densément packées, finition miroir scintillant.", "Glitter holographic, base nude.", "Sparkle intense, finition brillante."],
+  matte: ["Finition mate pure, sans brillance.", "Mat sur mat, texture velours.", "Aucune brillance, juste la couleur."],
+  // Nouveaux
+  baroque: ["Ornements dorés, volutes sculptées, opulence assumée.", "Filigranes baroques sur fond profond, toucher royal.", "Courbes ornementales, dentelles revisitées."],
+  cyberpunk: ["Néons glitchés, circuits imprimés, esthétique futuriste underground.", "Chrome liquide et pixels cassés.", "Hacker nails : décodé, fragmenté, électrifié."],
+  deco: ["Lignes épurées Art Déco, éventails stylisés, or et noir.", "Géométrie Streamline Moderne des années 30.", "Symétrie radiale, soleil levant en opacité."],
+  "op-art": ["Illusions d'optique en noir et blanc, vagues vibrantes.", "Vasarely revisited : cercles hypnotiques.", "Vibrations visuelles qui bougent au regard."],
+  streetwear: ["Graffiti abstrait, tags stylisés, couleurs primaires.", "Esthétique urbaine brute, clins d'œil BD.", "Drop culture : éditions limitées en mode nail."],
+  ethno: ["Tissages ethniques, motifs berbères, géométrie ancestrale.", "Trames amérindiennes, points touareg.", "Heritage culturel en pattern d'ongle."],
+  vaporwave: ["Treillis perspectif, dégradés néon, esthétique A E S T H E T I C.", "Pâle rose et cyan, palmiers pixelisés.", "Nostalgie numérique, glitch chromatique."],
+  nineties: ["Bling-bling, couleurs primaires, MTV.", "Boy band meets rave culture.", "CD-ROM, tamagotchis, Macarena : retour 1995."],
+  "neo-gothic": ["Crochets modernes, dentelles noires, finition mate.", "Wicca contemporaine, ombres allongées.", "Cathédrale revisitée en version minimal."],
+  memphis: ["Squiggles, pois, couleurs primaires 80s.", "Postmodernisme italien, formes ludiques.", "Confetti graphique sur fond pastel."],
+  monochrome: ["Une seule couleur déclinée, 10 nuances.", "Total look noir, beige ou marine.", "Minimalisme chromatique assumé."],
+  mosaic: ["Carreaux colorés, émaux italiens, pigments variés.", "Tesselles byzantines revisitées.", "Patchwork pigmentaire, joyau de doigts."],
+  watercolor: ["Taches aquarellées, pigments dilués, finition soft.", "Lavis colorés qui se répondent.", "Pinceau trempé dans l'eau, pas dans l'ongle."],
+  sculptural: ["Effet 3D, relief, matière qui sort du plat.", "Sculpture miniature, geste architectural.", "Texture tactile, ombres et lumières."],
+  futuristic: ["Holographie, transparence, lignes de code.", "Y2K du futur : chrome et néon.", "UX de l'ongle, design system de la main."],
+  asiatique: ["Sakura en fleur, vagues Hokusai, esthétique zen.", "Minimal japonais, encre noire, papier de riz.", "Hanami sur les ongles : cerisier en fête."],
+  botanical: ["Herbier séché, fougères, eucalyptus.", "Jardin d'hiver en motif d'ongle.", "Végétal réel, scellé sous glossy."],
+  rustic: ["Bois brut, pierre naturelle, cuir patiné.", "Cabin in the woods, mains de bûcheron.", "Texture organique, finition cire d'abeille."],
 };
 
 const FINISH_BY_STYLE: Record<CatalogStyle, "glossy" | "matte" | "satin" | "chrome" | "glitter"> = {
-  minimal: "glossy",
-  french: "glossy",
-  chrome: "chrome",
-  luxury: "satin",
-  floral: "glossy",
-  gothic: "matte",
-  kawaii: "glossy",
-  y2k: "glitter",
-  nature: "matte",
-  wedding: "satin",
-  art: "satin",
-  abstract: "glossy",
-  tribal: "matte",
-  celestial: "glossy",
-  tropical: "glossy",
-  vintage: "satin",
-  geometric: "satin",
-  ombre: "satin",
-  glitter: "glitter",
-  matte: "matte",
+  minimal: "glossy", french: "glossy", chrome: "chrome", luxury: "satin",
+  floral: "glossy", gothic: "matte", kawaii: "glossy", y2k: "glitter",
+  nature: "matte", wedding: "satin", art: "satin", abstract: "glossy",
+  tribal: "matte", celestial: "glossy", tropical: "glossy", vintage: "satin",
+  geometric: "satin", ombre: "satin", glitter: "glitter", matte: "matte",
+  baroque: "satin", cyberpunk: "chrome", deco: "glossy", "op-art": "glossy",
+  streetwear: "matte", ethno: "matte", vaporwave: "glossy", nineties: "glitter",
+  "neo-gothic": "matte", memphis: "glossy", monochrome: "matte", mosaic: "satin",
+  watercolor: "glossy", sculptural: "matte", futuristic: "chrome",
+  asiatique: "satin", botanical: "matte", rustic: "matte",
 };
 
 const TAGS_BY_STYLE: Record<CatalogStyle, string[]> = {
@@ -344,6 +309,24 @@ const TAGS_BY_STYLE: Record<CatalogStyle, string[]> = {
   ombre: ["ombre", "gradient", "fade"],
   glitter: ["glitter", "sparkle", "party"],
   matte: ["matte", "velvet", "modern"],
+  baroque: ["baroque", "ornate", "gold"],
+  cyberpunk: ["cyberpunk", "neon", "glitch"],
+  deco: ["deco", "artdeco", "gilded"],
+  "op-art": ["op-art", "optical", "illusion"],
+  streetwear: ["streetwear", "urban", "graffiti"],
+  ethno: ["ethno", "tribal", "weave"],
+  vaporwave: ["vaporwave", "neon", "aesthetic"],
+  nineties: ["nineties", "retro", "pop"],
+  "neo-gothic": ["neo-gothic", "dark", "lace"],
+  memphis: ["memphis", "postmodern", "pop"],
+  monochrome: ["monochrome", "single-color", "minimal"],
+  mosaic: ["mosaic", "tile", "patchwork"],
+  watercolor: ["watercolor", "wash", "fluid"],
+  sculptural: ["sculptural", "3d", "relief"],
+  futuristic: ["futuristic", "neon", "tech"],
+  asiatique: ["asiatique", "japan", "zen"],
+  botanical: ["botanical", "green", "fresh"],
+  rustic: ["rustic", "wood", "earthy"],
 };
 
 const SHAPE_BY_STYLE: Record<CatalogStyle, Shape[]> = {
@@ -367,6 +350,24 @@ const SHAPE_BY_STYLE: Record<CatalogStyle, Shape[]> = {
   ombre: ["almond", "coffin", "oval"],
   glitter: ["coffin", "ballerina", "almond"],
   matte: ["square", "coffin", "almond"],
+  baroque: ["almond", "coffin", "oval"],
+  cyberpunk: ["coffin", "ballerina", "stiletto"],
+  deco: ["square", "almond", "coffin"],
+  "op-art": ["square", "coffin", "ballerina"],
+  streetwear: ["coffin", "ballerina", "square"],
+  ethno: ["almond", "coffin", "oval"],
+  vaporwave: ["almond", "coffin", "oval"],
+  nineties: ["coffin", "square", "ballerina"],
+  "neo-gothic": ["coffin", "stiletto", "almond"],
+  memphis: ["square", "coffin", "almond"],
+  monochrome: ["almond", "coffin", "square", "oval"],
+  mosaic: ["square", "coffin", "almond"],
+  watercolor: ["almond", "oval", "round"],
+  sculptural: ["coffin", "square", "ballerina"],
+  futuristic: ["coffin", "ballerina", "stiletto"],
+  asiatique: ["almond", "oval", "round"],
+  botanical: ["almond", "oval", "round"],
+  rustic: ["almond", "natural", "oval", "round"],
 };
 
 /* ---------- Génération ---------- */
@@ -378,6 +379,7 @@ export type GeneratedItem = {
   style: CatalogStyle;
   palette: PaletteName;
   shape: Shape;
+  pattern: PatternKind;
   price: string;
   orders: number;
   views: number;
@@ -386,12 +388,9 @@ export type GeneratedItem = {
   description: string;
   tags: string[];
   finish: "glossy" | "matte" | "satin" | "chrome" | "glitter";
-  createdAt: string; // ISO date
+  createdAt: string;
 };
 
-/**
- * Hash déterministe (mulberry32) — même seed = même résultat.
- */
 function hash(str: string): number {
   let h = 1779033703 ^ str.length;
   for (let i = 0; i < str.length; i++) {
@@ -418,7 +417,6 @@ function generateName(style: CatalogStyle, palette: PaletteName, rng: () => numb
   const { prefix, suffix } = NAME_PARTS[style];
   const pre = pick(prefix, rng);
   const suf = pick(suffix, rng);
-  // 30% du temps on ajoute la couleur dans le nom
   if (rng() < 0.3) {
     const cap = palette.charAt(0).toUpperCase() + palette.slice(1);
     return `${pre} ${cap} ${suf}`;
@@ -427,21 +425,18 @@ function generateName(style: CatalogStyle, palette: PaletteName, rng: () => numb
 }
 
 function generatePrice(rng: () => number): string {
-  // Prix entre 29,90€ et 79,90€, arrondi à 5
   const buckets = [29.9, 34.9, 39.9, 44.9, 49.9, 54.9, 59.9, 64.9, 69.9, 74.9, 79.9];
   const p = buckets[Math.floor(rng() * buckets.length)]!;
   return `${p.toFixed(2).replace(".", ",")} €`;
 }
 
-function generateMetrics(rng: () => number, popularity: number): { orders: number; views: number } {
-  // Plus la popularité est haute, plus les chiffres sont gros
+function generateMetrics(rng: () => number, popularity: number) {
   const base = 10 + Math.floor(rng() * 200 * popularity);
   const views = base * (5 + Math.floor(rng() * 10));
   return { orders: base, views };
 }
 
 function generateDate(rng: () => number): string {
-  // Date entre il y a 6 mois et aujourd'hui
   const now = Date.now();
   const past = now - 1000 * 60 * 60 * 24 * 180;
   const t = past + Math.floor(rng() * (now - past));
@@ -452,10 +447,10 @@ export function generateItem(
   style: CatalogStyle,
   paletteName: PaletteName,
   shape: Shape,
-  creator: { name: string; tone: string },
+  pattern: PatternKind,
   popularity: number
 ): GeneratedItem {
-  const seed = hash(`${style}|${paletteName}|${shape}|${creator.name}`);
+  const seed = hash(`${style}|${paletteName}|${shape}|${pattern}`);
   const rng = mulberry32(seed);
 
   const paletteEntry = PALETTES.find((p) => p.name === paletteName)!;
@@ -463,16 +458,16 @@ export function generateItem(
   const description = pick(DESCRIPTION_BY_STYLE[style], rng);
   const tags = TAGS_BY_STYLE[style];
 
-  // Pour la stabilité, on encode style + palette + shape dans l'ID
-  const id = `${style}-${paletteName}-${shape}-${creator.name.toLowerCase().replace(/\s+/g, "-")}`;
+  const id = `${style}-${paletteName}-${shape}-${pattern}`.replace(/[^a-z0-9-]/gi, "");
 
   return {
     id,
     name: generateName(style, paletteName, rng),
-    creator: creator.name,
+    creator: STUDIO.name,
     style,
     palette: paletteName,
     shape,
+    pattern,
     price: generatePrice(rng),
     orders,
     views,
@@ -487,36 +482,33 @@ export function generateItem(
 
 /**
  * Génère le catalogue complet.
- * Limit appliqué pour éviter de faire exploser la mémoire en test.
+ * Pour chaque (style, palette, shape), on pioche 1-2 motifs dans la liste éligible du style.
+ * 38 styles × 25 palettes × 2 formes × 1.5 motifs ≈ 2850 combinaisons uniques
+ * (avant la limite CATALOG_LIMIT).
  */
 export function generateCatalog(limit?: number): GeneratedItem[] {
   const items: GeneratedItem[] = [];
-  let count = 0;
 
   for (const style of STYLES) {
     const allowedShapes = SHAPE_BY_STYLE[style];
+    const allowedPatterns = PATTERNS_BY_STYLE[style];
+    // 2 premières formes du style (variété sans explosion)
+    const shapesToUse = allowedShapes.slice(0, 2);
+
     for (const paletteEntry of PALETTES) {
-      // Limite à 2 formes par (style, palette) pour rester varié sans exploser
-      const shapesToUse = allowedShapes.slice(0, 2);
       for (const shape of shapesToUse) {
-        const creator = CREATORS[0]!;
-        const popSeed = hash(`${style}|${paletteEntry.name}|${shape}`);
-        const popularity = 0.3 + (popSeed % 100) / 150;
-        items.push(generateItem(style, paletteEntry.name, shape, creator, popularity));
-        count++;
-        if (limit && items.length >= limit) return items;
+        // 1 ou 2 motifs par (style, palette, shape) pour rester varié
+        const patternsToUse = allowedPatterns.slice(0, 1 + (allowedPatterns.length > 4 ? 1 : 0));
+        for (const pattern of patternsToUse) {
+          const popSeed = hash(`${style}|${paletteEntry.name}|${shape}|${pattern}`);
+          const popularity = 0.3 + (popSeed % 100) / 150;
+          items.push(generateItem(style, paletteEntry.name, shape, pattern, popularity));
+          if (limit && items.length >= limit) return items;
+        }
       }
     }
   }
   return items;
-}
-
-/**
- * Calcule la popularité d'un item (0-1) à partir de ses metrics.
- * Utilisé pour le tri dans la marketplace.
- */
-export function popularityOf(item: GeneratedItem): number {
-  return Math.log10(item.views + 1) / 5;
 }
 
 /* ---------- Recherche et filtres ---------- */
@@ -525,7 +517,7 @@ export type FilterOptions = {
   styles?: CatalogStyle[];
   palettes?: PaletteName[];
   shapes?: Shape[];
-  creators?: string[];
+  patterns?: PatternKind[];
   finishes?: ("glossy" | "matte" | "satin" | "chrome" | "glitter")[];
   minPrice?: number;
   maxPrice?: number;
@@ -536,22 +528,19 @@ function priceToNumber(p: string): number {
   return parseFloat(p.replace(",", ".").replace("€", "").trim());
 }
 
-export function filterCatalog(
-  items: GeneratedItem[],
-  filters: FilterOptions
-): GeneratedItem[] {
+export function filterCatalog(items: GeneratedItem[], filters: FilterOptions): GeneratedItem[] {
   return items.filter((item) => {
     if (filters.styles?.length && !filters.styles.includes(item.style)) return false;
     if (filters.palettes?.length && !filters.palettes.includes(item.palette)) return false;
     if (filters.shapes?.length && !filters.shapes.includes(item.shape)) return false;
-    if (filters.creators?.length && !filters.creators.includes(item.creator)) return false;
+    if (filters.patterns?.length && !filters.patterns.includes(item.pattern)) return false;
     if (filters.finishes?.length && !filters.finishes.includes(item.finish)) return false;
     const price = priceToNumber(item.price);
     if (filters.minPrice !== undefined && price < filters.minPrice) return false;
     if (filters.maxPrice !== undefined && price > filters.maxPrice) return false;
     if (filters.search) {
       const q = filters.search.toLowerCase();
-      const haystack = `${item.name} ${item.creator} ${item.style} ${item.palette} ${item.shape} ${item.tags.join(" ")}`.toLowerCase();
+      const haystack = `${item.name} ${item.style} ${item.palette} ${item.shape} ${item.pattern} ${item.tags.join(" ")}`.toLowerCase();
       if (!haystack.includes(q)) return false;
     }
     return true;

@@ -37,6 +37,7 @@ import {
   type Shape,
 } from "@/lib/catalog-generator";
 import Pagination from "@/components/Pagination";
+import DesignPattern from "@/components/DesignPattern";
 
 const ITEMS_PER_PAGE = 36;
 
@@ -130,7 +131,7 @@ export default function ExplorePage() {
       .slice(0, 8)
       .map(([style, count]) => {
         const first = ALL_ITEMS.find((i) => i.style === style)!;
-        return { style, count, palette: first.palette3 };
+        return { style, count, palette: first.palette3, pattern: first.pattern };
       });
   }, []);
 
@@ -340,7 +341,7 @@ export default function ExplorePage() {
             <Sparkles className="w-4 h-4 text-rose" />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {topStyles.map(({ style, count, palette }) => (
+            {topStyles.map(({ style, count, palette, pattern }) => (
               <button
                 key={style}
                 onClick={() => {
@@ -349,11 +350,10 @@ export default function ExplorePage() {
                 }}
                 className="group rounded-2xl border border-soft-gray/60 overflow-hidden text-left hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
-                <div
+                <DesignPattern
+                  pattern={pattern}
+                  colors={palette}
                   className="aspect-[16/9]"
-                  style={{
-                    background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]}, ${palette[2]})`,
-                  }}
                 />
                 <div className="px-3 py-2">
                   <p className="text-xs font-semibold capitalize text-ink group-hover:text-rose transition-colors">
@@ -431,12 +431,12 @@ function ItemCard({ item }: { item: MarketplaceItem }) {
       href={`/explore/${item.id}`}
       className="group rounded-3xl bg-white border border-soft-gray/50 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
     >
-      <div
-        className="aspect-[4/3] relative overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${item.palette3[0]} 0%, ${item.palette3[1]} 50%, ${item.palette3[2]} 100%)`,
-        }}
-      >
+      <div className="aspect-[4/3] relative overflow-hidden">
+        <DesignPattern
+          pattern={item.pattern}
+          colors={item.palette3}
+          className="absolute inset-0"
+        />
         <div className="absolute inset-0 bg-black/10" />
         <div className="absolute top-3 left-3">
           <span className="px-2 py-0.5 rounded-full bg-white/85 backdrop-blur text-[10px] font-semibold uppercase tracking-wider text-ink">

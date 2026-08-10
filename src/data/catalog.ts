@@ -15,7 +15,7 @@ import {
   type Shape,
 } from "@/lib/catalog-generator";
 
-const CATALOG_LIMIT = 1200;
+const CATALOG_LIMIT = 3000;
 
 // Généré UNE FOIS au build → constant au runtime
 export const CATALOG: readonly GeneratedItem[] = Object.freeze(generateCatalog(CATALOG_LIMIT));

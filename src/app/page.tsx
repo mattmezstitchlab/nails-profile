@@ -116,7 +116,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-ink text-white">
       {/* ── Floating Header ───────────────────────────────────────── */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 sm:px-10">
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-ink/95 px-6 py-5 backdrop-blur-md sm:px-10 border-b border-white/5">
         <Logo size="sm" dark />
         <nav className="hidden sm:flex items-center gap-6 text-sm text-white/55">
           <a href="#concept" className="hover:text-white transition-colors">Concept</a>
@@ -134,9 +134,15 @@ export default function LandingPage() {
 
       {/* ── HERO ───────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
-        <img
-          src={visualAssets.blackNails}
-          alt="Gros plan de mains avec manucure noire éditoriale"
+        <video
+          src={visualAssets.handVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster={visualAssets.blackNails}
+          aria-hidden="true"
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/15" />

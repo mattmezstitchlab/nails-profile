@@ -104,11 +104,11 @@ export default function Profile3DPage() {
     <AppShell>
       <PageHero
         eyebrow="PROFILE / 02"
-        title="Ton Living Nail Profile."
+        title="Ton Living AIME®."
         description="Un modèle 3D vivant de chacun de tes 10 ongles. Il suit leur pousse, mémorise leur forme, et se met à jour à chaque scan."
         image={visualAssets.editorialHands}
         imageAlt="Modèle 3D d'une main manucurée"
-        label="Living Nail Profile"
+        label="Living AIME®"
         meta="Première mondiale"
         compact
       />
@@ -122,7 +122,7 @@ export default function Profile3DPage() {
             <p className="text-xs text-rose font-semibold uppercase tracking-widest">
               Innovation
             </p>
-            <h1 className="text-2xl font-bold text-ink">Living Nail Profile</h1>
+            <h1 className="text-2xl font-bold text-ink">Living AIME®</h1>
           </div>
           <button
             onClick={regenerate}
@@ -143,7 +143,7 @@ export default function Profile3DPage() {
             <p className="font-semibold text-ink">Première mondiale</p>
             <p className="text-sm text-ink-light/60 mt-1">
               Personne d'autre ne combine scan biométrique + modèle paramétrique
-              + pousse évolutive + commande à l'unité. Ton Nail Profile est vivant :
+              + pousse évolutive + commande à l'unité. Ton AIME® est vivant :
               il grandit avec toi et anticipe tes designs.
             </p>
           </div>

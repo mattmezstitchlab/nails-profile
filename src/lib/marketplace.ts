@@ -16,7 +16,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-sunset-ocean",
     name: "Sunset Ocean",
-    creator: "Camille Dubois",
+    creator: "AIME® Studio",
     style: "luxury" as const,
     palette: "bordeaux" as const,
     shape: "almond" as const,
@@ -34,7 +34,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-wedding-pearl",
     name: "Wedding Pearl",
-    creator: "Léa Moreau",
+    creator: "AIME® Studio",
     style: "wedding" as const,
     palette: "nude" as const,
     shape: "oval" as const,
@@ -52,7 +52,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-chrome-noir",
     name: "Chrome Noir",
-    creator: "Sofia Chen",
+    creator: "AIME® Studio",
     style: "chrome" as const,
     palette: "noir" as const,
     shape: "coffin" as const,
@@ -70,7 +70,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-cherry-blossom",
     name: "Cherry Blossom",
-    creator: "Camille Dubois",
+    creator: "AIME® Studio",
     style: "floral" as const,
     palette: "rose" as const,
     shape: "oval" as const,
@@ -88,7 +88,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-gothic-velvet",
     name: "Gothic Velvet",
-    creator: "Camille Dubois",
+    creator: "AIME® Studio",
     style: "gothic" as const,
     palette: "bordeaux" as const,
     shape: "coffin" as const,
@@ -106,7 +106,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
     id: "featured-y2k-pop",
     name: "Y2K Pop",
-    creator: "Sofia Chen",
+    creator: "AIME® Studio",
     style: "y2k" as const,
     palette: "cyan" as const,
     shape: "ballerina" as const,

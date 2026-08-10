@@ -22,14 +22,10 @@ import {
   ChevronDown,
   Search,
   X,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  ALL_ITEMS,
-  FEATURED_ITEMS,
-  getAllCreators,
-  type MarketplaceItem,
-} from "@/lib/marketplace";
+import { ALL_ITEMS, FEATURED_ITEMS, type MarketplaceItem } from "@/lib/marketplace";
 import {
   filterCatalog,
   sortCatalog,
@@ -74,7 +70,9 @@ const FINISHES = ["glossy", "matte", "satin", "chrome", "glitter"] as const;
 
 export default function ExplorePage() {
   const [activeCollection, setActiveCollection] = useState("Tendances");
-  const [sortBy, setSortBy] = useState<"populaire" | "recent" | "prix-asc" | "prix-desc" | "alpha">("populaire");
+  const [sortBy, setSortBy] = useState<
+    "populaire" | "recent" | "prix-asc" | "prix-desc" | "alpha"
+  >("populaire");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -82,15 +80,11 @@ export default function ExplorePage() {
   const [styleFilter, setStyleFilter] = useState<CatalogStyle | null>(null);
   const [paletteFilter, setPaletteFilter] = useState<PaletteName | null>(null);
   const [shapeFilter, setShapeFilter] = useState<Shape | null>(null);
-  const [creatorFilter, setCreatorFilter] = useState<string | null>(null);
   const [finishFilter, setFinishFilter] = useState<typeof FINISHES[number] | null>(null);
-
-  const allCreators = useMemo(() => getAllCreators(), []);
 
   const filtered = useMemo(() => {
     let items: MarketplaceItem[] = ALL_ITEMS;
 
-    // Filtre par collection (équivalent à un tag preset)
     if (activeCollection !== "Tendances") {
       const tags = COLLECTION_TAGS[activeCollection] ?? [];
       if (tags.length > 0) {
@@ -98,18 +92,16 @@ export default function ExplorePage() {
       }
     }
 
-    // Filtres avancés
     items = filterCatalog(items, {
       styles: styleFilter ? [styleFilter] : undefined,
       palettes: paletteFilter ? [paletteFilter] : undefined,
       shapes: shapeFilter ? [shapeFilter] : undefined,
-      creators: creatorFilter ? [creatorFilter] : undefined,
       finishes: finishFilter ? [finishFilter] : undefined,
       search: search.trim() || undefined,
     });
 
     return sortCatalog(items, sortBy);
-  }, [activeCollection, sortBy, search, styleFilter, paletteFilter, shapeFilter, creatorFilter, finishFilter]);
+  }, [activeCollection, sortBy, search, styleFilter, paletteFilter, shapeFilter, finishFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const safePage = Math.min(page, totalPages);
@@ -119,25 +111,39 @@ export default function ExplorePage() {
     setStyleFilter(null);
     setPaletteFilter(null);
     setShapeFilter(null);
-    setCreatorFilter(null);
     setFinishFilter(null);
     setSearch("");
     setActiveCollection("Tendances");
     setPage(1);
   };
 
-  const hasActiveFilters = styleFilter || paletteFilter || shapeFilter || creatorFilter || finishFilter || search;
+  const hasActiveFilters = styleFilter || paletteFilter || shapeFilter || finishFilter || search;
+
+  // Top styles pour le rail "Collections AIME®"
+  const topStyles = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const item of ALL_ITEMS) {
+      counts[item.style] = (counts[item.style] ?? 0) + 1;
+    }
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([style, count]) => {
+        const first = ALL_ITEMS.find((i) => i.style === style)!;
+        return { style, count, palette: first.palette3 };
+      });
+  }, []);
 
   return (
     <AppShell>
       <PageHero
         eyebrow={`EXPLORE / ${ALL_ITEMS.length.toLocaleString("fr-FR")} designs`}
         title="Des créations qui peuvent devenir les tiennes."
-        description="Découvre des sets imaginés par la communauté, puis essaie-les directement sur tes mains et ton format."
+        description="Découvre les collections imaginées par AIME® Studio, puis essaie-les directement sur tes mains et ton format."
         image={visualAssets.blackNails}
         imageAlt="Manucure noire éditoriale en gros plan"
-        label="Marketplace paramétrique"
-        meta="Des designs adaptables"
+        label="Marketplace AIME®"
+        meta="Des designs adaptables à ton ongle"
       />
       <div className="max-w-6xl mx-auto px-6 py-8">
         {/* Header + search */}
@@ -168,7 +174,7 @@ export default function ExplorePage() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Chercher un design, un créateur, un style…"
+              placeholder="Chercher un design, un style, une couleur…"
               className="w-full pl-10 pr-3 py-2.5 rounded-full border border-soft-gray/80 bg-white text-sm placeholder:text-ink-light/30 focus:outline-none focus:border-rose/30 focus:ring-4 focus:ring-rose/5"
             />
           </div>
@@ -201,13 +207,19 @@ export default function ExplorePage() {
             label="Style"
             value={styleFilter}
             options={STYLES.map((s) => ({ value: s, label: s }))}
-            onChange={(v) => { setStyleFilter(v as CatalogStyle | null); setPage(1); }}
+            onChange={(v) => {
+              setStyleFilter(v as CatalogStyle | null);
+              setPage(1);
+            }}
           />
           <FilterSelect
             label="Couleur"
             value={paletteFilter}
             options={PALETTES.map((p) => ({ value: p.name, label: p.name }))}
-            onChange={(v) => { setPaletteFilter(v as PaletteName | null); setPage(1); }}
+            onChange={(v) => {
+              setPaletteFilter(v as PaletteName | null);
+              setPage(1);
+            }}
             renderOption={(opt) => {
               const palette = PALETTES.find((p) => p.name === opt.value);
               return (
@@ -225,19 +237,19 @@ export default function ExplorePage() {
             label="Forme"
             value={shapeFilter}
             options={SHAPES.map((s) => ({ value: s, label: s }))}
-            onChange={(v) => { setShapeFilter(v as Shape | null); setPage(1); }}
-          />
-          <FilterSelect
-            label="Créateur"
-            value={creatorFilter}
-            options={allCreators.map((c) => ({ value: c, label: c }))}
-            onChange={(v) => { setCreatorFilter(v); setPage(1); }}
+            onChange={(v) => {
+              setShapeFilter(v as Shape | null);
+              setPage(1);
+            }}
           />
           <FilterSelect
             label="Finition"
             value={finishFilter}
             options={FINISHES.map((f) => ({ value: f, label: f }))}
-            onChange={(v) => { setFinishFilter(v as typeof FINISHES[number] | null); setPage(1); }}
+            onChange={(v) => {
+              setFinishFilter(v as typeof FINISHES[number] | null);
+              setPage(1);
+            }}
           />
 
           <div className="ml-auto flex items-center gap-2">
@@ -268,9 +280,12 @@ export default function ExplorePage() {
         {/* Featured (uniquement page 1, sans filtres) */}
         {safePage === 1 && !hasActiveFilters && activeCollection === "Tendances" && (
           <section className="mb-10">
-            <h2 className="text-sm font-semibold text-ink-light/50 uppercase tracking-wider mb-3">
-              En vedette cette semaine
-            </h2>
+            <div className="flex items-end justify-between mb-3">
+              <h2 className="text-sm font-semibold text-ink-light/50 uppercase tracking-wider">
+                En vedette cette semaine
+              </h2>
+              <span className="text-[11px] text-ink-light/30">par AIME® Studio</span>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {FEATURED_ITEMS.map((item) => (
                 <ItemCard key={item.id} item={item} />
@@ -278,7 +293,9 @@ export default function ExplorePage() {
             </div>
             <div className="my-10 flex items-center gap-4 text-xs text-ink-light/30 uppercase tracking-widest">
               <div className="flex-1 h-px bg-soft-gray/60" />
-              <span>Catalogue complet · {(ALL_ITEMS.length - FEATURED_ITEMS.length).toLocaleString("fr-FR")} designs</span>
+              <span>
+                Catalogue complet · {(ALL_ITEMS.length - FEATURED_ITEMS.length).toLocaleString("fr-FR")} designs
+              </span>
               <div className="flex-1 h-px bg-soft-gray/60" />
             </div>
           </section>
@@ -295,7 +312,9 @@ export default function ExplorePage() {
           <div className="rounded-3xl border border-dashed border-soft-gray bg-white px-6 py-14 text-center mb-8">
             <PanelsTopLeft className="w-8 h-8 text-rose mx-auto mb-3" />
             <p className="font-medium text-ink">Aucun design ne correspond à vos critères.</p>
-            <p className="text-sm text-ink-light/40 mt-1">Essayez d'élargir vos filtres ou créez le vôtre.</p>
+            <p className="text-sm text-ink-light/40 mt-1">
+              Essayez d'élargir vos filtres ou créez le vôtre.
+            </p>
             <button
               onClick={clearFilters}
               className="inline-flex items-center gap-2 mt-4 px-4 py-2.5 bg-ink text-white rounded-xl text-sm font-medium"
@@ -314,41 +333,36 @@ export default function ExplorePage() {
           }}
         />
 
-        {/* Trending creators */}
+        {/* Collections AIME® — top styles */}
         <div className="rounded-3xl bg-white border border-soft-gray/50 p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold">Créateurs en vue</h3>
-            <TrendingUp className="w-4 h-4 text-rose" />
+            <h3 className="font-semibold">Collections AIME®</h3>
+            <Sparkles className="w-4 h-4 text-rose" />
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-none">
-            {allCreators.slice(0, 6).map((name) => {
-              const item = ALL_ITEMS.find((i) => i.creator === name);
-              const count = ALL_ITEMS.filter((i) => i.creator === name).length;
-              return (
-                <button
-                  key={name}
-                  onClick={() => {
-                    setCreatorFilter(name);
-                    setPage(1);
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {topStyles.map(({ style, count, palette }) => (
+              <button
+                key={style}
+                onClick={() => {
+                  setStyleFilter(style as CatalogStyle);
+                  setPage(1);
+                }}
+                className="group rounded-2xl border border-soft-gray/60 overflow-hidden text-left hover:shadow-md hover:-translate-y-0.5 transition-all"
+              >
+                <div
+                  className="aspect-[16/9]"
+                  style={{
+                    background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]}, ${palette[2]})`,
                   }}
-                  className="flex items-center gap-3 p-3 rounded-2xl bg-soft-gray/30 min-w-[200px] hover:bg-soft-gray/50 transition-colors text-left"
-                >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-semibold flex-shrink-0"
-                    style={{ background: item?.tone ?? "#888" }}
-                  >
-                    {name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{name}</p>
-                    <p className="text-xs text-ink-light/40">{count} créations</p>
-                  </div>
-                </button>
-              );
-            })}
+                />
+                <div className="px-3 py-2">
+                  <p className="text-xs font-semibold capitalize text-ink group-hover:text-rose transition-colors">
+                    {style}
+                  </p>
+                  <p className="text-[10px] text-ink-light/40">{count} designs</p>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 
@@ -358,12 +372,12 @@ export default function ExplorePage() {
           className="block rounded-3xl bg-ink p-8 text-center text-white hover:bg-ink-light transition-colors"
         >
           <ScanLine className="w-8 h-8 mx-auto mb-3 text-rose-light" />
-          <h3 className="text-xl font-bold mb-1">Crée et publie tes designs</h3>
+          <h3 className="text-xl font-bold mb-1">Imagine ton design sur-mesure</h3>
           <p className="text-sm text-white/50 mb-4">
-            Deviens créateur·rice et partage tes créations avec la communauté
+            Décris une ambiance, AIME® compose un set de 10 designs adaptés à ton profil.
           </p>
           <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-ink rounded-xl text-sm font-semibold hover:bg-ivory transition-colors">
-            Publier une création
+            Créer mon AIME®
             <ArrowRight className="w-4 h-4" />
           </span>
         </Link>
@@ -380,7 +394,13 @@ type FilterSelectProps<T extends string> = {
   renderOption?: (opt: { value: T; label: string }) => React.ReactNode;
 };
 
-function FilterSelect<T extends string>({ label, value, options, onChange, renderOption }: FilterSelectProps<T>) {
+function FilterSelect<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  renderOption,
+}: FilterSelectProps<T>) {
   return (
     <div className="relative">
       <select
@@ -438,7 +458,8 @@ function ItemCard({ item }: { item: MarketplaceItem }) {
           </span>
           <div className="flex items-center gap-3 text-white/95 text-xs">
             <span className="flex items-center gap-1">
-              <Eye className="w-3 h-3" /> {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}k` : item.views}
+              <Eye className="w-3 h-3" />{" "}
+              {item.views > 1000 ? `${(item.views / 1000).toFixed(1)}k` : item.views}
             </span>
             <span className="flex items-center gap-1">
               <ShoppingBag className="w-3 h-3" /> {item.orders}
@@ -451,7 +472,7 @@ function ItemCard({ item }: { item: MarketplaceItem }) {
         <h3 className="font-semibold text-ink mb-1 group-hover:text-rose transition-colors line-clamp-1">
           {item.name}
         </h3>
-        <p className="text-xs text-ink-light/40">par {item.creator}</p>
+        <p className="text-xs text-ink-light/40">par AIME® Studio</p>
         <div className="flex gap-1.5 mt-3 flex-wrap">
           {item.tags.slice(0, 3).map((tag) => (
             <span

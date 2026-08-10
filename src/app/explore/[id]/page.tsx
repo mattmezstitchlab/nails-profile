@@ -37,7 +37,7 @@ export default function ProductDetailPage({ params }: PageProps) {
             Ce design n'existe pas (ou plus)
           </h1>
           <p className="mt-3 text-ink-light/50">
-            Il a peut-être été retiré par son créateur, ou le lien est incorrect.
+            Il a peut-être été retiré par AIME® Studio, ou le lien est incorrect.
           </p>
           <Link
             href="/explore"
@@ -51,16 +51,19 @@ export default function ProductDetailPage({ params }: PageProps) {
     );
   }
 
-  const creatorItems = getCreatorItems(item.creator).filter((i) => i.id !== item.id);
+  // Designs du même style (pour la section "Dans la même collection")
+  const sameCollection = getCreatorItems(item.creator)
+    .filter((i) => i.style === item.style && i.id !== item.id)
+    .slice(0, 4);
 
   return (
     <AppShell>
       <PageHero
         eyebrow={`DESIGN / ${item.style.toUpperCase()}`}
         title="Une création. Dix façons de la porter."
-        description="Ce design n'est pas une image figée. Il s'adapte à ton Nail Profile, doigt par doigt, avant de devenir ton set."
+        description="Ce design n'est pas une image figée. Il s'adapte à ton AIME®, doigt par doigt, avant de devenir ton set."
         image={item.palette3[0]}
-        imageAlt={`${item.name} — ${item.style} par ${item.creator}`}
+        imageAlt={`${item.name} — ${item.style}`}
         label={item.name.toUpperCase()}
         meta="Essayable sur ton profil"
         compact
@@ -86,7 +89,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           </button>
         </div>
 
-        {/* Hero Design — colored block matching the design's primary tone */}
+        {/* Hero Design */}
         <div
           className="rounded-3xl aspect-[16/10] mb-6 flex items-center justify-center relative overflow-hidden"
           style={{
@@ -107,28 +110,20 @@ export default function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Creator info */}
-        <Link
-          href="/creator"
-          className="flex items-center gap-3 mb-6 p-4 rounded-2xl bg-white border border-soft-gray/50 hover:border-ink/15 transition-all"
-        >
+        {/* Studio + price */}
+        <div className="flex items-center gap-3 mb-6 p-4 rounded-2xl bg-white border border-soft-gray/50">
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
             style={{ background: item.tone }}
           >
-            {item.creator
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+            A
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium">{item.creator}</p>
-            <p className="text-xs text-ink-light/40">
-              {getCreatorItems(item.creator).length} créations
-            </p>
+            <p className="text-sm font-medium">AIME® Studio</p>
+            <p className="text-xs text-ink-light/40">Collection {item.style}</p>
           </div>
           <span className="text-2xl font-bold text-ink">{item.price}</span>
-        </Link>
+        </div>
 
         {/* Description */}
         <div className="rounded-2xl bg-white border border-soft-gray/50 p-6 mb-6">
@@ -145,7 +140,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Palette + finish */}
+        {/* Palette + finish + shape */}
         <div className="rounded-2xl bg-white border border-soft-gray/50 p-6 mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
@@ -168,15 +163,19 @@ export default function ProductDetailPage({ params }: PageProps) {
             </div>
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-light/40">
-                Finitions
+                Spécifications
               </p>
               <div className="flex items-center gap-2">
                 <Sparkles className="w-3.5 h-3.5 text-rose" />
-                <span className="text-sm capitalize">{item.finish}</span>
+                <span className="text-sm capitalize">Finition {item.finish}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Layers3 className="w-3.5 h-3.5 text-rose" />
                 <span className="text-sm">10 designs doigt par doigt</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <User className="w-3.5 h-3.5 text-rose" />
+                <span className="text-sm capitalize">Forme {item.shape}</span>
               </div>
             </div>
           </div>
@@ -188,7 +187,7 @@ export default function ProductDetailPage({ params }: PageProps) {
           <div>
             <p className="text-sm font-medium text-rose">Essaie ce design sur tes ongles</p>
             <p className="text-xs text-ink-light/40 mt-0.5">
-              Avec ton Nail Profile, ce design s'adapte automatiquement à la forme de tes ongles.
+              Avec ton AIME®, ce design s'adapte automatiquement à la forme de tes ongles.
             </p>
           </div>
         </div>
@@ -212,33 +211,30 @@ export default function ProductDetailPage({ params }: PageProps) {
           </button>
         </div>
 
-        {/* Other items by same creator */}
-        {creatorItems.length > 0 && (
+        {/* Same collection */}
+        {sameCollection.length > 0 && (
           <div className="mt-12">
             <h3 className="text-sm font-semibold text-ink-light/50 uppercase tracking-wider mb-4">
-              Autres créations de {item.creator}
+              Dans la même collection {item.style}
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {creatorItems.map((other) => (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {sameCollection.map((other) => (
                 <Link
                   key={other.id}
                   href={`/explore/${other.id}`}
                   className="group rounded-2xl bg-white border border-soft-gray/50 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
                 >
                   <div
-                    className="aspect-[16/9]"
+                    className="aspect-square"
                     style={{
-                      background: `linear-gradient(135deg, ${other.palette[0]}, ${other.palette[1]}, ${other.palette[2]})`,
+                      background: `linear-gradient(135deg, ${other.palette3[0]}, ${other.palette3[1]}, ${other.palette3[2]})`,
                     }}
                   />
-                  <div className="p-4 flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-ink group-hover:text-rose transition-colors">
-                        {other.name}
-                      </p>
-                      <p className="text-xs text-ink-light/40">{other.style}</p>
-                    </div>
-                    <span className="text-sm font-semibold">{other.price}</span>
+                  <div className="p-3">
+                    <p className="font-medium text-ink text-sm group-hover:text-rose transition-colors line-clamp-1">
+                      {other.name}
+                    </p>
+                    <p className="text-[10px] text-ink-light/40">{other.price}</p>
                   </div>
                 </Link>
               ))}

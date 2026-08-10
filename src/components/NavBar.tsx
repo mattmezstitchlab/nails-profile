@@ -15,7 +15,7 @@ const mobileLinks = [
 
 const desktopLinks = [
   { href: "/", label: "Accueil", icon: Home },
-  { href: "/profile", label: "Mon Nail Profile", icon: User },
+  { href: "/profile", label: "Mon AIME®", icon: User },
   { href: "/create", label: "Créer", icon: ScanLine },
   { href: "/explore", label: "Explorer", icon: Compass },
   { href: "/my-creations", label: "Mes créations", icon: PanelsTopLeft },
@@ -54,7 +54,7 @@ export default function NavBar() {
           })}
         </nav>
         <div className="px-3 pt-4 border-t border-line/50">
-          <p className="text-xs text-ink-light/30">© NAIL PROFILE 2026</p>
+          <p className="text-xs text-ink-light/30">© AIME® 2026</p>
         </div>
       </aside>
 

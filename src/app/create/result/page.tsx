@@ -212,7 +212,7 @@ export default function DesignResultPage() {
           <ScanLine className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isFallback ? "text-amber-600" : "text-rose"}`} />
           <div>
             <p className={`text-sm font-medium mb-0.5 ${isFallback ? "text-amber-700" : "text-rose"}`}>
-              {isFallback ? "Mode dégradé : palette déterministe" : "Design adapté à ton Nail Profile"}
+              {isFallback ? "Mode dégradé : palette déterministe" : "Design adapté à ton AIME®"}
             </p>
             <p className="text-xs text-ink-light/60">
               {isFallback

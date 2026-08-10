@@ -109,12 +109,7 @@ export const SHAPES: Shape[] = [
 ];
 
 export const CREATORS: { name: string; tone: string }[] = [
-  { name: "Camille Dubois", tone: "#e62e6b" },
-  { name: "Léa Moreau", tone: "#b38a4b" },
-  { name: "Sofia Chen", tone: "#67618f" },
-  { name: "Yuki Tanaka", tone: "#1e88e5" },
-  { name: "Aïcha Bensaïd", tone: "#d4af37" },
-  { name: "Ines Vargas", tone: "#2d6a4f" },
+  { name: "AIME® Studio", tone: "#e62e6b" },
 ];
 
 /* ---------- Préfixes et suffixes par style pour générer des noms ---------- */
@@ -504,16 +499,12 @@ export function generateCatalog(limit?: number): GeneratedItem[] {
       // Limite à 2 formes par (style, palette) pour rester varié sans exploser
       const shapesToUse = allowedShapes.slice(0, 2);
       for (const shape of shapesToUse) {
-        // 1-2 créateurs par combinaison
-        for (let ci = 0; ci < 2; ci++) {
-          const creator = CREATORS[(count + ci) % CREATORS.length]!;
-          // Popularité déterministe selon la combinaison
-          const popSeed = hash(`${style}|${paletteEntry.name}|${ci}`);
-          const popularity = 0.3 + (popSeed % 100) / 150; // 0.3 - 0.97
-          items.push(generateItem(style, paletteEntry.name, shape, creator, popularity));
-          count++;
-          if (limit && items.length >= limit) return items;
-        }
+        const creator = CREATORS[0]!;
+        const popSeed = hash(`${style}|${paletteEntry.name}|${shape}`);
+        const popularity = 0.3 + (popSeed % 100) / 150;
+        items.push(generateItem(style, paletteEntry.name, shape, creator, popularity));
+        count++;
+        if (limit && items.length >= limit) return items;
       }
     }
   }

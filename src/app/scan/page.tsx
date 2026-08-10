@@ -45,7 +45,7 @@ export default function ScanPage() {
           )}
           <div>
             <p className="text-xs text-rose font-semibold uppercase tracking-widest">Scan</p>
-            <h1 className="text-2xl font-bold text-ink">Nail Profile</h1>
+            <h1 className="text-2xl font-bold text-ink">AIME®</h1>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export default function ScanPage() {
               <h2 className="text-3xl font-bold mb-3">Montre-moi ta main.</h2>
               <p className="text-ink-light/50 max-w-md mx-auto leading-relaxed">
                 Place ta main dans le cadre. L&apos;IA va détecter, isoler et mesurer
-                automatiquement chacun de tes ongles pour créer ton Nail Profile.
+                automatiquement chacun de tes ongles pour créer ton AIME®.
               </p>
             </div>
 

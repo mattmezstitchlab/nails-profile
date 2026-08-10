@@ -60,8 +60,8 @@ export default function NailProfilePage() {
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <div>
-            <p className="text-xs text-rose font-semibold uppercase tracking-widest">Nail Profile</p>
-            <h1 className="text-2xl font-bold text-ink">Mon Nail Profile</h1>
+            <p className="text-xs text-rose font-semibold uppercase tracking-widest">AIME®</p>
+            <h1 className="text-2xl font-bold text-ink">Mon AIME®</h1>
           </div>
           <div className="ml-auto flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full">
             <Shield className="w-3.5 h-3.5 text-green-600" />

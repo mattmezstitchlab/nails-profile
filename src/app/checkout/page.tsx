@@ -48,7 +48,7 @@ export default function CheckoutPage() {
       <PageHero
         eyebrow="ORDER / 01"
         title="Ton set est prêt."
-        description="Une dernière sélection de finition, puis ton set personnalisé part en fabrication avec les dimensions de ton Nail Profile."
+        description="Une dernière sélection de finition, puis ton set personnalisé part en fabrication avec les dimensions de ton AIME®."
         image={visualAssets.weddingHands}
         imageAlt="Mains avec manucure élégante de mariage"
         label="Fabrication sur commande"
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
         <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-4 mb-6 flex items-start gap-3">
           <Shield className="w-4 h-4 text-rose mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-rose">Adapté à ton Nail Profile</p>
+            <p className="text-sm font-medium text-rose">Adapté à ton AIME®</p>
             <p className="text-xs text-ink-light/40">
               Les dimensions de chaque ongle correspondent exactement à tes gabarits personnels.
             </p>
@@ -155,7 +155,7 @@ export default function CheckoutPage() {
               <span className="font-medium">39,90 €</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-ink-light/50">Adaptation Nail Profile</span>
+              <span className="text-ink-light/50">Adaptation AIME®</span>
               <span className="text-ink-light/30">Inclus</span>
             </div>
             <div className="flex justify-between">

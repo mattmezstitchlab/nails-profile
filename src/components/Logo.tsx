@@ -16,15 +16,17 @@ const sizes = {
 
 export default function Logo({ className = "", size = "md", dark = false, href }: LogoProps) {
   const text = (
-    <span className={`inline-flex items-baseline gap-0.5 font-semibold tracking-tight ${sizes[size]} ${className}`}>
-      <span className={dark ? "text-white" : "text-ink"}>NAIL</span>
-      <span className="text-rose">PROFILE</span>
+    <span
+      className={`inline-flex items-baseline gap-0.5 font-semibold tracking-tight ${sizes[size]} ${className}`}
+    >
+      <span className={dark ? "text-white" : "text-ink"}>AIME</span>
+      <span className="text-rose align-super text-[0.6em] -ml-0.5">®</span>
     </span>
   );
 
   if (href === undefined) {
     return (
-      <Link href="/" className="inline-flex items-center gap-2">
+      <Link href="/" className="inline-flex items-center gap-2" aria-label="AIME® — Accueil">
         {text}
       </Link>
     );

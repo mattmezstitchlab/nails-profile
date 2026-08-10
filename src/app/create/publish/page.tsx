@@ -162,7 +162,7 @@ export default function PublishPage() {
           <div>
             <p className="text-sm font-medium text-rose">Design paramétrique</p>
             <p className="text-xs text-ink-light/40">
-              Ton design sera automatiquement adapté aux différents Nail Profiles.
+              Ton design sera automatiquement adapté aux différents AIME®s.
               Chaque acheteur recevra le design ajusté à ses propres dimensions.
             </p>
           </div>

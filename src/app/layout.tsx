@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "NAIL PROFILE — Tes ongles. Ton design. Ton format.",
+  title: "AIME® — L'ongle que l'on aime",
   description:
-    "Scanne tes mains, imagine ton design, l'IA l'adapte à tes ongles. Crée, essaie, commande.",
+    "AIME® imagine, génère et imprime des designs d'ongles sur-mesure adaptés à ta main. L'ongle que l'on aime — par AIME® Studio.",
 };
 
 export const viewport: Viewport = {

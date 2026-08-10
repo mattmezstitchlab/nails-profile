@@ -18,12 +18,12 @@ import Link from "next/link";
 
 const sections = [
   { label: "Mes mains", icon: ScanLine, href: "/canvas", desc: "Voir mes 10 gabarits" },
-  { label: "Nail Profile 3D", icon: ScanFace, href: "/profile/3d", desc: "Modèle 3D vivant de ton ongle" },
+  { label: "AIME® 3D", icon: ScanFace, href: "/profile/3d", desc: "Modèle 3D vivant de ton ongle" },
   { label: "Mes designs", icon: Palette, href: "/my-creations", desc: "4 créations" },
   { label: "Mes commandes", icon: ShoppingBag, href: "/orders", desc: "3 commandes" },
   { label: "Mes favoris", icon: Heart, href: "/explore", desc: "3 favoris" },
   { label: "Mes créations publiées", icon: Globe, href: "/creator", desc: "Créateur" },
-  { label: "Nail Profile", icon: Shield, href: "/scan/profile", desc: "Paramètres du profil" },
+  { label: "AIME®", icon: Shield, href: "/scan/profile", desc: "Paramètres du profil" },
 ];
 
 export default function ProfilePage() {
@@ -36,7 +36,7 @@ export default function ProfilePage() {
         image={visualAssets.editorialHands}
         imageAlt="Mains manucurées avec bijoux et nail art éditorial"
         label="Camille Dubois"
-        meta="Nail Profile actif"
+        meta="AIME® actif"
         compact
       />
       <div className="max-w-2xl mx-auto px-6 py-8">
@@ -49,13 +49,13 @@ export default function ProfilePage() {
           <p className="text-sm text-ink-light/40 mt-1">camille@nailprofile.com</p>
         </div>
 
-        {/* Nail Profile Status */}
+        {/* AIME® Status */}
         <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-5 mb-6 flex items-start gap-4">
           <div className="w-10 h-10 rounded-xl bg-rose-light/10 flex items-center justify-center flex-shrink-0">
             <ScanFace className="w-5 h-5 text-rose" />
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-ink">Ton Nail Profile est actif</p>
+            <p className="font-semibold text-ink">Ton AIME® est actif</p>
             <p className="text-sm text-ink-light/40 mt-0.5">
               Tes 10 gabarits sont prêts pour toutes tes futures créations.
             </p>

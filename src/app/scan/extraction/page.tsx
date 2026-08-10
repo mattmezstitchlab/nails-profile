@@ -152,7 +152,7 @@ export default function ExtractionPage() {
               : "bg-ink/5 text-ink-light/30 cursor-not-allowed"
           }`}
         >
-          {allValidated ? "Créer mon Nail Profile" : "Valide les 5 ongles pour continuer"}
+          {allValidated ? "Créer mon AIME®" : "Valide les 5 ongles pour continuer"}
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>

@@ -156,7 +156,7 @@ export default function CreatePage() {
         <div className="rounded-3xl bg-white border border-soft-gray/50 p-6 mb-6">
           <h2 className="text-lg font-semibold mb-1">Imagine ton set.</h2>
           <p className="text-sm text-ink-light/40 mb-4">
-            Décris le design que tu souhaites. L&apos;IA va créer un set de 10 ongles adaptés à ton Nail Profile.
+            Décris le design que tu souhaites. L&apos;IA va créer un set de 10 ongles adaptés à ton AIME®.
           </p>
 
           <textarea

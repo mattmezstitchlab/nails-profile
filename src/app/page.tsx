@@ -128,7 +128,7 @@ export default function LandingPage() {
           href="/scan"
           className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-ivory transition-colors"
         >
-          Créer mon Nail Profile
+          Créer mon AIME®
         </Link>
       </header>
 
@@ -148,7 +148,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/15" />
         <div className="relative z-10 px-6 pb-16 pt-40 sm:px-10 lg:px-20">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-white/50">
-            Nail Profile — La première plateforme d'ongles sur mesure par IA
+            AIME® — L'ongle que l'on aime
           </p>
           <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl lg:text-[5.6rem]">
             Tes ongles.
@@ -158,15 +158,15 @@ export default function LandingPage() {
             <span className="text-rose-light">Ton format.</span>
           </h1>
           <p className="mt-7 max-w-xl text-lg leading-8 text-white/60 sm:text-xl">
-            Scanne tes mains. L'IA mesure tes ongles, crée un profil unique et compose
-            un set de designs qui s'adaptent exactement à toi.
+            AIME® mesure tes ongles, crée un profil unique et compose un set de designs
+            qui s'adaptent exactement à toi. L'ongle que l'on aime.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <Link
               href="/scan"
               className="inline-flex items-center gap-2.5 rounded-full bg-rose px-7 py-3.5 text-sm font-semibold text-white hover:bg-rose-dark transition-colors shadow-lg shadow-rose/25"
             >
-              Créer mon Nail Profile
+              Créer mon AIME®
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
@@ -389,7 +389,7 @@ export default function LandingPage() {
               href="/scan"
               className="inline-flex items-center gap-2.5 rounded-full bg-rose px-8 py-4 text-base font-semibold text-white hover:bg-rose-dark transition-colors shadow-lg shadow-rose/25"
             >
-              Créer mon Nail Profile
+              Créer mon AIME®
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
@@ -412,7 +412,7 @@ export default function LandingPage() {
             <Link href="/profile" className="hover:text-white transition-colors">Profil</Link>
             <Link href="/orders" className="hover:text-white transition-colors">Commandes</Link>
           </div>
-          <p className="text-xs text-white/20">© NAIL PROFILE 2026</p>
+          <p className="text-xs text-white/20">© AIME® STUDIO 2026</p>
         </div>
       </footer>
     </div>

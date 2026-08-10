@@ -22,15 +22,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
+import { MARKETPLACE_ITEMS } from "@/lib/marketplace";
 
-const marketplaceItems = [
-  { id: "set1", name: "Sunset Ocean", creator: "Camille Dubois", style: "Luxury", price: "49,90 €", orders: 89, views: 1240, tone: "#a7475c", image: visualAssets.editorialHands, tags: ["luxury", "ocean", "sunset"] },
-  { id: "set2", name: "Wedding Pearl", creator: "Léa Moreau", style: "Wedding", price: "59,90 €", orders: 56, views: 890, tone: "#e4c9c3", image: visualAssets.weddingHands, tags: ["wedding", "pearl", "romantic"] },
-  { id: "set3", name: "Chrome Noir", creator: "Sofia Chen", style: "Chrome", price: "54,90 €", orders: 134, views: 2100, tone: "#242424", image: visualAssets.blackNails, tags: ["chrome", "minimal", "black"] },
-  { id: "set4", name: "Cherry Blossom", creator: "Camille Dubois", style: "Floral", price: "44,90 €", orders: 42, views: 760, tone: "#e5a8b9", image: visualAssets.artHands, tags: ["floral", "spring", "pink"] },
-  { id: "set5", name: "Gothic Velvet", creator: "Camille Dubois", style: "Gothic", price: "52,90 €", orders: 78, views: 1450, tone: "#3d2139", image: visualAssets.blackNails, tags: ["gothic", "velvet", "dark"] },
-  { id: "set6", name: "Y2K Pop", creator: "Sofia Chen", style: "Y2K", price: "39,90 €", orders: 210, views: 3200, tone: "#6fc2c7", image: visualAssets.blueNails, tags: ["y2k", "pop", "holographic"] },
-];
+const marketplaceItems = MARKETPLACE_ITEMS;
 
 const collections = [
   { name: "Tendances", icon: TrendingUp },

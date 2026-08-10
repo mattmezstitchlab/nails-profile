@@ -43,20 +43,84 @@ const quickStyles = [
   { id: "abstract", label: "Abstract", icon: Shapes },
 ];
 
+type GeneratedNail = {
+  finger: string;
+  image?: string;
+  swatch?: string;
+  finish?: string;
+};
+
+type GeneratedSet = {
+  name: string;
+  nails: GeneratedNail[];
+  mode?: "ai" | "fallback";
+  reason?: string;
+};
+
+const DEFAULT_FINGERS = [
+  "thumb_left", "index_left", "middle_left", "ring_left", "pinky_left",
+  "thumb_right", "index_right", "middle_right", "ring_right", "pinky_right",
+];
+
 export default function CreatePage() {
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [inspirationName, setInspirationName] = useState<string | null>(null);
   const [step, setStep] = useState<"prompt" | "generating" | "result">("prompt");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim() && !selectedStyle) return;
+    setError(null);
     setStep("generating");
-    setTimeout(() => {
+
+    try {
+      const response = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: prompt.trim(),
+          style: selectedStyle,
+          nailProfile: {
+            skinTone: "neutral warm",
+            nails: DEFAULT_FINGERS.map((finger) => ({
+              finger,
+              width: 14,
+              length: 12,
+              shape: "almond" as const,
+            })),
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI service responded with ${response.status}`);
+      }
+
+      const data = (await response.json()) as GeneratedSet & { mode: "ai" | "fallback" };
+      const enriched: GeneratedSet = {
+        ...data,
+        nails: data.nails.length > 0
+          ? data.nails
+          : DEFAULT_FINGERS.map((finger) => ({
+              finger,
+              swatch: "hsl(0, 0%, 50%)",
+            })),
+      };
+
+      try {
+        sessionStorage.setItem("generatedSet", JSON.stringify(enriched));
+      } catch {
+        // sessionStorage peut être plein / désactivé — on continue sans persister
+      }
+
       setStep("result");
       router.push("/create/result");
-    }, 3000);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "La génération a échoué");
+      setStep("prompt");
+    }
   };
 
   return (
@@ -183,6 +247,10 @@ export default function CreatePage() {
           <ScanLine className="w-5 h-5" />
           Créer mon design
         </button>
+
+        {error && (
+          <p className="mt-4 text-sm text-rose text-center">{error}</p>
+        )}
 
         {/* Generating state */}
         {step === "generating" && (

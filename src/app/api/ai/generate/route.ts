@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
-import { GoogleGenAI } from "@google/genai";
+import { generateText } from "ai";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // seconds; Vercel hobby limit
+export const maxDuration = 60;
 
 type NailSize = {
   finger: string;
@@ -46,9 +46,10 @@ const STYLE_KEYWORDS: Record<string, string> = {
 };
 
 /**
- * Build a single image generation prompt for one nail.
- * Each finger gets its own prompt so the model can vary the design per finger
- * while still respecting the global set direction.
+ * Build a single nail design prompt for one finger.
+ * The model is asked to respond as JSON describing the design's visual specs
+ * (palette, motif, finish) so the result can be rendered consistently and
+ * later applied to the parametric 3D mesh.
  */
 function buildNailPrompt(opts: {
   index: number;
@@ -67,22 +68,24 @@ function buildNailPrompt(opts: {
   const skinLine = skinTone ? `complementing ${skinTone} skin tone` : "photographed on editorial hands";
 
   return [
-    `Single fingernail close-up macro photograph, ${fingerLabel}, ${size}.`,
-    `Design direction: ${prompt}.`,
+    `You are an editorial nail designer creating nail ${index + 1} of ${total} in a coherent set.`,
+    `Subject: single fingernail close-up, ${fingerLabel}, ${size}.`,
+    `Set direction: ${prompt}.`,
     styleLine,
-    `Editorial nail photography, soft studio lighting, sharp focus on the nail plate,`,
-    `${skinLine}, square aspect ratio 1:1.`,
-    `This is nail ${index + 1} of ${total} in a coherent 10-nail set — keep visual DNA consistent (palette, finish, motif) but vary the composition per finger.`,
+    skinLine,
+    `Reply with strict JSON only, no markdown, matching this schema:`,
+    `{"name": string, "palette": [string, string, string], "motif": string, "finish": "glossy" | "matte" | "satin" | "chrome" | "glitter", "description": string, "swatch": "#hexcolor"}`,
+    `The palette must reuse 2 of the 3 colors from nails 1-${Math.max(1, index)} in this set so all 10 nails feel like one collection. Vary the motif and composition per finger.`,
   ]
     .filter(Boolean)
-    .join(" ");
+    .join("\n");
 }
 
 /**
- * Deterministic palette helper when the API is unavailable.
+ * Deterministic palette when no API key is configured.
  * Produces 10 swatches that share a hue family so the set looks coherent.
  */
-function deterministicFallback(prompt: string, style?: string): string[] {
+function deterministicFallback(prompt: string, style?: string) {
   let hash = 0;
   const input = `${prompt}|${style ?? ""}`;
   for (let i = 0; i < input.length; i++) hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
@@ -91,8 +94,50 @@ function deterministicFallback(prompt: string, style?: string): string[] {
     const h = (baseHue + i * 12) % 360;
     const s = 55 + ((hash >> (i + 1)) & 0x1f);
     const l = 35 + ((hash >> (i + 3)) & 0x1f);
-    return `hsl(${h}, ${s}%, ${l}%)`;
+    return {
+      name: inferSetName(prompt, style) + " — " + (i + 1),
+      palette: [`hsl(${h}, ${s}%, ${l}%)`, `hsl(${(h + 30) % 360}, ${s}%, ${l + 10}%)`, `hsl(${(h - 30 + 360) % 360}, ${s - 5}%, ${l - 10}%)`],
+      motif: i % 2 === 0 ? "solid color" : "subtle gradient",
+      finish: inferFinish(style),
+      description: `Auto-generated palette based on "${prompt}" (no API key configured).`,
+      swatch: `hsl(${h}, ${s}%, ${l}%)`,
+    };
   });
+}
+
+type GeneratedNailDesign = {
+  name?: string;
+  palette?: string[];
+  motif?: string;
+  finish?: string;
+  description?: string;
+  swatch?: string;
+};
+
+/**
+ * Parse the model output as a single JSON object.
+ * Tolerant to fenced code blocks and minor noise.
+ */
+function parseJsonNailDesign(text: string): GeneratedNailDesign | null {
+  const cleaned = text
+    .trim()
+    .replace(/^```(?:json)?/i, "")
+    .replace(/```$/, "")
+    .trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const firstBrace = cleaned.indexOf("{");
+    const lastBrace = cleaned.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -110,79 +155,62 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.GOOGLE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
+  const apiKey = process.env.AI_GATEWAY_API_KEY ?? process.env.GOOGLE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
   const total = body.nailProfile?.nails?.length ?? 10;
   const nails = body.nailProfile?.nails ?? [];
 
-  // Fallback: no API key configured → return deterministic mock that already
-  // looks more intentional than the previous hardcoded palette.
+  // Fallback: no API key configured → return deterministic mock
   if (!apiKey) {
-    const swatches = deterministicFallback(body.prompt, body.style);
+    const designs = deterministicFallback(body.prompt, body.style);
     return Response.json({
       mode: "fallback",
-      reason: "GOOGLE_AI_API_KEY not set; using deterministic palette",
+      reason: "AI_GATEWAY_API_KEY not set; using deterministic palette",
       set: {
         name: inferSetName(body.prompt, body.style),
-        nails: Array.from({ length: total }, (_, i) => ({
+        nails: designs.map((d, i) => ({
           finger: nails[i]?.finger ?? `finger_${i}`,
-          swatch: swatches[i],
-          finish: inferFinish(body.style),
+          ...d,
         })),
       },
     });
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
-    const generated = await Promise.all(
-      Array.from({ length: total }, async (_, i) => {
-        const prompt = buildNailPrompt({
-          index: i,
-          total,
-          prompt: body.prompt,
-          style: body.style,
-          nail: nails[i],
-          skinTone: body.nailProfile?.skinTone,
+    // We ask the model to return structured JSON for each finger.
+    // The AI Gateway resolves to whatever provider is configured; we ask for
+    // a Gemini Flash model by default (cheap + supports text output reliably).
+    const collectedDesigns: GeneratedNailDesign[] = [];
+    for (let i = 0; i < total; i++) {
+      const prompt = buildNailPrompt({
+        index: i,
+        total,
+        prompt: body.prompt,
+        style: body.style,
+        nail: nails[i],
+        skinTone: body.nailProfile?.skinTone,
+      });
+      try {
+        const { text } = await generateText({
+          model: "google/gemini-2.5-flash",
+          prompt,
         });
-        try {
-          const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: prompt,
-            config: {
-              responseModalities: ["IMAGE"],
-            },
-          });
-          const part = response.candidates?.[0]?.content?.parts?.find(
-            (p) => "inlineData" in p && p.inlineData
-          );
-          if (part && "inlineData" in part && part.inlineData?.data) {
-            return {
-              finger: nails[i]?.finger ?? `finger_${i}`,
-              image: `data:${part.inlineData.mimeType ?? "image/png"};base64,${part.inlineData.data}`,
-              finish: inferFinish(body.style),
-            };
-          }
-        } catch (err) {
-          console.error(`[ai/generate] nail ${i} failed`, err);
-        }
-        return null;
-      })
-    );
+        const parsed = parseJsonNailDesign(text);
+        if (parsed) collectedDesigns.push(parsed);
+      } catch (err) {
+        console.error(`[ai/generate] nail ${i} failed`, err);
+        collectedDesigns.push({});
+      }
+    }
 
-    const images = generated.filter((n): n is NonNullable<typeof n> => n !== null);
-
-    if (images.length === 0) {
-      const swatches = deterministicFallback(body.prompt, body.style);
+    const valid = collectedDesigns.filter((d) => d && Object.keys(d).length > 0);
+    if (valid.length === 0) {
+      const fallback = deterministicFallback(body.prompt, body.style);
       return Response.json({
         mode: "fallback",
-        reason: "AI generation produced no images; using deterministic palette",
+        reason: "AI generation produced no designs; using deterministic palette",
         set: {
           name: inferSetName(body.prompt, body.style),
-          nails: Array.from({ length: total }, (_, i) => ({
-            finger: nails[i]?.finger ?? `finger_${i}`,
-            swatch: swatches[i],
-            finish: inferFinish(body.style),
-          })),
+          nails: fallback.map((d, i) => ({ finger: nails[i]?.finger ?? `finger_${i}`, ...d })),
         },
       });
     }
@@ -191,23 +219,27 @@ export async function POST(request: NextRequest) {
       mode: "ai",
       set: {
         name: inferSetName(body.prompt, body.style),
-        nails: images,
+        nails: valid.map((d, i) => ({
+          finger: nails[i]?.finger ?? `finger_${i}`,
+          name: d.name,
+          palette: d.palette,
+          motif: d.motif,
+          finish: d.finish ?? inferFinish(body.style),
+          description: d.description,
+          swatch: d.swatch ?? d.palette?.[0] ?? "#cccccc",
+        })),
       },
     });
   } catch (error) {
     console.error("[ai/generate] failed", error);
-    const swatches = deterministicFallback(body.prompt, body.style);
+    const fallback = deterministicFallback(body.prompt, body.style);
     return Response.json(
       {
         mode: "fallback",
         reason: error instanceof Error ? error.message : "AI generation failed",
         set: {
           name: inferSetName(body.prompt, body.style),
-          nails: Array.from({ length: total }, (_, i) => ({
-            finger: nails[i]?.finger ?? `finger_${i}`,
-            swatch: swatches[i],
-            finish: inferFinish(body.style),
-          })),
+          nails: fallback.map((d, i) => ({ finger: nails[i]?.finger ?? `finger_${i}`, ...d })),
         },
       },
       { status: 200 }

@@ -98,11 +98,16 @@ export default function CreatePage() {
         throw new Error(`AI service responded with ${response.status}`);
       }
 
-      const data = (await response.json()) as GeneratedSet & { mode: "ai" | "fallback" };
+      const data = (await response.json()) as { mode: "ai" | "fallback"; reason?: string; set?: GeneratedSet; error?: string };
+      if (data.error || !data.set || !Array.isArray(data.set.nails)) {
+        throw new Error(data.error ?? "Réponse IA invalide (set manquant)");
+      }
       const enriched: GeneratedSet = {
-        ...data,
-        nails: data.nails.length > 0
-          ? data.nails
+        name: data.set.name,
+        mode: data.mode,
+        reason: data.reason,
+        nails: data.set.nails.length > 0
+          ? data.set.nails
           : DEFAULT_FINGERS.map((finger) => ({
               finger,
               swatch: "hsl(0, 0%, 50%)",

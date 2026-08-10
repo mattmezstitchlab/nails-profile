@@ -29,6 +29,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import NailStudio from "@/components/NailStudio";
+import NailPhotoScan, { type DetectedNail, type ScanResult } from "@/components/NailPhotoScan";
+import DesignPattern from "@/components/DesignPattern";
 
 const quickStyles = [
   { id: "minimal", label: "Minimal", icon: Minus },
@@ -182,8 +184,7 @@ export default function CreatePage() {
             onClick={() => setMode("photo")}
             icon={ImageIcon}
             label="Photo"
-            sub="Bientôt"
-            disabled
+            sub="Scan IA côté client"
           />
         </div>
 
@@ -203,16 +204,7 @@ export default function CreatePage() {
 
         {mode === "draw" && <DrawMode />}
 
-        {mode === "photo" && (
-          <div className="rounded-3xl bg-white border border-soft-gray/50 p-10 text-center">
-            <ImageIcon className="w-10 h-10 text-ink-light/30 mx-auto mb-3" />
-            <h3 className="font-semibold text-ink mb-1">Mode Photo — Bientôt</h3>
-            <p className="text-sm text-ink-light/50 max-w-sm mx-auto">
-              L'IA ajustera automatiquement le design à la forme de tes ongles détectée sur la photo.
-              Phase 2 du studio AIME® — en cours de préparation.
-            </p>
-          </div>
-        )}
+        {mode === "photo" && <PhotoMode />}
 
         {/* Generating overlay (describe mode) */}
         {step === "generating" && mode === "describe" && (
@@ -416,6 +408,115 @@ function DrawMode() {
         </div>
       </div>
       <NailStudio />
+    </div>
+  );
+}
+
+function PhotoMode() {
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [selectedPalette, setSelectedPalette] = useState<[string, string, string]>([
+    "#e62e6b",
+    "#22304a",
+    "#c4545f",
+  ]);
+
+  function applyDesignToNails(nails: DetectedNail[], palette: [string, string, string]) {
+    try {
+      sessionStorage.setItem(
+        "photoScan",
+        JSON.stringify({
+          scanAt: new Date().toISOString(),
+          nails,
+          imageWidth: scanResult?.imageWidth,
+          imageHeight: scanResult?.imageHeight,
+          palette,
+        })
+      );
+    } catch {
+      // sessionStorage plein
+    }
+  }
+
+  return (
+    <div>
+      <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-4 mb-6 flex items-start gap-3">
+        <ImageIcon className="w-4 h-4 text-rose mt-0.5 flex-shrink-0" />
+        <div>
+          <p className="text-sm font-medium text-rose">Mode Photo — Détection IA</p>
+          <p className="text-xs text-ink-light/50 mt-0.5">
+            Importe une photo de ta main. AIME® détecte chaque ongle via MediaPipe et
+            prépare la projection du design. Tout se passe dans ton navigateur.
+          </p>
+        </div>
+      </div>
+
+      <NailPhotoScan
+        onScan={(result) => {
+          setScanResult(result);
+          applyDesignToNails(result.nails, selectedPalette);
+        }}
+      />
+
+      {scanResult && (
+        <div className="mt-6 rounded-3xl bg-white border border-soft-gray/50 p-6">
+          <h3 className="text-sm font-semibold text-ink-light/50 uppercase tracking-wider mb-3">
+            Palette à projeter
+          </h3>
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { label: "Sunset", colors: ["#e62e6b", "#22304a", "#c4545f"] as [string, string, string] },
+              { label: "Chrome", colors: ["#242424", "#0a0a0a", "#3a3a3a"] as [string, string, string] },
+              { label: "Wedding", colors: ["#e4c9c3", "#f7e8e1", "#d4a89a"] as [string, string, string] },
+              { label: "Witch", colors: ["#3d2139", "#1a0f1a", "#5a2d4a"] as [string, string, string] },
+              { label: "Mint", colors: ["#b8e6c8", "#7fc8a0", "#dff3e2"] as [string, string, string] },
+              { label: "Lavande", colors: ["#b39ddb", "#7e57c2", "#d1c4e9"] as [string, string, string] },
+            ].map((p) => (
+              <button
+                key={p.label}
+                onClick={() => {
+                  setSelectedPalette(p.colors);
+                  applyDesignToNails(scanResult.nails, p.colors);
+                }}
+                className={`flex items-center gap-2 rounded-full border px-3 py-1.5 transition-colors ${
+                  JSON.stringify(p.colors) === JSON.stringify(selectedPalette)
+                    ? "border-rose bg-rose/5"
+                    : "border-soft-gray/80 hover:border-ink/15"
+                }`}
+              >
+                <span className="flex">
+                  {p.colors.map((c, i) => (
+                    <span
+                      key={i}
+                      className="w-4 h-4 rounded-full border-2 border-white -ml-1.5 first:ml-0"
+                      style={{ background: c }}
+                    />
+                  ))}
+                </span>
+                <span className="text-xs font-medium">{p.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                try {
+                  sessionStorage.setItem("photoScanPalette", JSON.stringify(selectedPalette));
+                } catch {
+                  // ignore
+                }
+                window.location.href = "/create/result?source=photo";
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-rose text-white px-5 py-2.5 text-sm font-semibold hover:bg-rose-dark transition-colors shadow-sm"
+            >
+              Voir le résultat sur mes ongles
+            </button>
+            <span className="text-xs text-ink-light/40">
+              Les {scanResult.nails.length} mesures seront utilisées pour projeter le design.
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

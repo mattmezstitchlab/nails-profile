@@ -8,14 +8,12 @@ import {
   ScanLine,
   Upload,
   Camera,
-  ArrowRight,
   Palette,
   ChevronLeft,
   Zap,
   Minus,
   CircleDot,
   Orbit,
-  Layers3,
   Flower2,
   Moon,
   Candy,
@@ -25,8 +23,12 @@ import {
   PenTool,
   Shapes,
   Activity,
+  Brush,
+  Sparkles,
+  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
+import NailStudio from "@/components/NailStudio";
 
 const quickStyles = [
   { id: "minimal", label: "Minimal", icon: Minus },
@@ -48,6 +50,10 @@ type GeneratedNail = {
   image?: string;
   swatch?: string;
   finish?: string;
+  palette?: string[];
+  motif?: string;
+  description?: string;
+  name?: string;
 };
 
 type GeneratedSet = {
@@ -62,8 +68,11 @@ const DEFAULT_FINGERS = [
   "thumb_right", "index_right", "middle_right", "ring_right", "pinky_right",
 ];
 
+type CreateMode = "describe" | "draw" | "photo";
+
 export default function CreatePage() {
   const router = useRouter();
+  const [mode, setMode] = useState<CreateMode>("describe");
   const [prompt, setPrompt] = useState("");
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [inspirationName, setInspirationName] = useState<string | null>(null);
@@ -117,7 +126,7 @@ export default function CreatePage() {
       try {
         sessionStorage.setItem("generatedSet", JSON.stringify(enriched));
       } catch {
-        // sessionStorage peut être plein / désactivé — on continue sans persister
+        // ignore
       }
 
       setStep("result");
@@ -133,132 +142,80 @@ export default function CreatePage() {
       <PageHero
         eyebrow="CREATE / 01"
         title="Imagine ton set."
-        description="Raconte une ambiance, une matière, une lumière. L'IA transforme ton intention en dix designs qui respectent ton profil."
+        description="Trois façons de créer : décrire ton intention, dessiner ongle par ongle, ou importer une photo de ta main."
         image={visualAssets.artHands}
         imageAlt="Mains avec nail art artistique noir et blanc"
-        label="Studio de création"
-        meta="Prompt naturel + inspiration"
+        label="Studio AIME®"
+        meta="Décrire · Dessiner · Photo"
         compact
       />
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6">
           <Link href="/" className="p-2 hover:bg-soft-gray rounded-xl transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <div>
+          <div className="flex-1">
             <p className="text-xs text-rose font-semibold uppercase tracking-widest">Créer</p>
-            <h1 className="text-2xl font-bold text-ink">AI Design Studio</h1>
+            <h1 className="text-2xl font-bold text-ink">Studio AIME®</h1>
           </div>
         </div>
 
-        {/* Prompt Area */}
-        <div className="rounded-3xl bg-white border border-soft-gray/50 p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-1">Imagine ton set.</h2>
-          <p className="text-sm text-ink-light/40 mb-4">
-            Décris le design que tu souhaites. L&apos;IA va créer un set de 10 ongles adaptés à ton AIME®.
-          </p>
-
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Je veux un design inspiré d'un coucher de soleil sur la mer, élégant, bleu nuit, corail et quelques détails dorés. Les cinq ongles doivent être différents mais appartenir au même univers."
-            className="w-full h-32 p-4 rounded-2xl border border-soft-gray/80 bg-ivory/50 text-ink placeholder:text-ink-light/25 resize-none focus:outline-none focus:border-rose/30 focus:ring-4 focus:ring-rose/5 transition-all text-sm leading-relaxed"
+        {/* Mode tabs */}
+        <div className="mb-6 -mx-1 flex flex-wrap items-center gap-2 px-1">
+          <ModeTab
+            active={mode === "describe"}
+            onClick={() => setMode("describe")}
+            icon={Sparkles}
+            label="Décrire"
+            sub="Prompt IA"
+          />
+          <ModeTab
+            active={mode === "draw"}
+            onClick={() => setMode("draw")}
+            icon={Brush}
+            label="Dessiner"
+            sub="Canvas 10 ongles"
+          />
+          <ModeTab
+            active={mode === "photo"}
+            onClick={() => setMode("photo")}
+            icon={ImageIcon}
+            label="Photo"
+            sub="Bientôt"
+            disabled
           />
         </div>
 
-        {/* Quick Styles */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-ink-light/60 mb-3">Styles rapides</h3>
-          <div className="flex flex-wrap gap-2">
-            {quickStyles.map((style) => (
-              <button
-                key={style.id}
-                onClick={() => setSelectedStyle(selectedStyle === style.id ? null : style.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  selectedStyle === style.id
-                    ? "bg-rose text-white shadow-md shadow-rose/15"
-                    : "bg-white border border-soft-gray/80 text-ink-light/60 hover:border-ink/15"
-                }`}
-              >
-                <style.icon className="w-3.5 h-3.5" />
-                {style.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Inspiration Import */}
-        <div className="mb-8">
-          <h3 className="text-sm font-semibold text-ink-light/60 mb-3">Importer une inspiration</h3>
-          <div className="flex gap-3">
-            <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed border-soft-gray/80 rounded-xl text-sm font-medium text-ink-light/50 hover:border-ink/15 transition-all cursor-pointer">
-              <Upload className="w-4 h-4" />
-              Importer une image
-              <input
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={(event) => setInspirationName(event.target.files?.[0]?.name ?? null)}
-              />
-            </label>
-            <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed border-soft-gray/80 rounded-xl text-sm font-medium text-ink-light/50 hover:border-ink/15 transition-all cursor-pointer">
-              <Camera className="w-4 h-4" />
-              Prendre une photo
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                className="sr-only"
-                onChange={(event) => setInspirationName(event.target.files?.[0]?.name ?? null)}
-              />
-            </label>
-            <button
-              type="button"
-              onClick={() => setInspirationName("Palette personnalisée")}
-              className={`flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed rounded-xl text-sm font-medium transition-all ${
-                inspirationName === "Palette personnalisée"
-                  ? "border-rose text-rose"
-                  : "border-soft-gray/80 text-ink-light/50 hover:border-ink/15"
-              }`}
-              aria-label="Choisir une palette"
-            >
-              <Palette className="w-4 h-4" />
-            </button>
-          </div>
-          {inspirationName && (
-            <p className="text-xs text-rose mt-3">Inspiration sélectionnée : {inspirationName}</p>
-          )}
-        </div>
-
-        {/* AI Assistant hint */}
-        <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-4 mb-6 flex items-start gap-3">
-          <Zap className="w-4 h-4 text-rose mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-ink-light/50 leading-relaxed">
-            <span className="font-medium text-rose">Astuce IA :</span> Tu peux décrire une ambiance, une palette de couleurs, une texture, un thème, ou même coller le lien d&apos;une image. L&apos;IA comprend le langage naturel.
-          </p>
-        </div>
-
-        {/* Generate Button */}
-        <button
-          onClick={handleGenerate}
-          disabled={!prompt.trim() && !selectedStyle}
-          className={`w-full flex items-center justify-center gap-3 px-6 py-5 rounded-2xl text-lg font-semibold transition-all ${
-            prompt.trim() || selectedStyle
-              ? "bg-rose text-white hover:bg-rose-dark shadow-lg shadow-rose/15"
-              : "bg-ink/5 text-ink-light/30 cursor-not-allowed"
-          }`}
-        >
-          <ScanLine className="w-5 h-5" />
-          Créer mon design
-        </button>
-
-        {error && (
-          <p className="mt-4 text-sm text-rose text-center">{error}</p>
+        {mode === "describe" && (
+          <DescribeMode
+            prompt={prompt}
+            setPrompt={setPrompt}
+            selectedStyle={selectedStyle}
+            setSelectedStyle={setSelectedStyle}
+            inspirationName={inspirationName}
+            setInspirationName={setInspirationName}
+            step={step}
+            error={error}
+            onGenerate={handleGenerate}
+          />
         )}
 
-        {/* Generating state */}
-        {step === "generating" && (
+        {mode === "draw" && <DrawMode />}
+
+        {mode === "photo" && (
+          <div className="rounded-3xl bg-white border border-soft-gray/50 p-10 text-center">
+            <ImageIcon className="w-10 h-10 text-ink-light/30 mx-auto mb-3" />
+            <h3 className="font-semibold text-ink mb-1">Mode Photo — Bientôt</h3>
+            <p className="text-sm text-ink-light/50 max-w-sm mx-auto">
+              L'IA ajustera automatiquement le design à la forme de tes ongles détectée sur la photo.
+              Phase 2 du studio AIME® — en cours de préparation.
+            </p>
+          </div>
+        )}
+
+        {/* Generating overlay (describe mode) */}
+        {step === "generating" && mode === "describe" && (
           <div className="fixed inset-0 bg-ivory/80 backdrop-blur-sm z-50 flex items-center justify-center">
             <div className="text-center animate-fade-in-up">
               <div className="relative w-24 h-24 mx-auto mb-6">
@@ -275,5 +232,190 @@ export default function CreatePage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+function ModeTab({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+  sub,
+  disabled,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  sub: string;
+  disabled?: boolean;
+}) {
+  return (
+    <button
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 transition-all text-left ${
+        active
+          ? "bg-ink text-white shadow-md"
+          : disabled
+            ? "bg-white border border-soft-gray/80 text-ink-light/30 cursor-not-allowed"
+            : "bg-white border border-soft-gray/80 text-ink-light/60 hover:border-ink/15"
+      }`}
+    >
+      <Icon className="w-4 h-4 flex-shrink-0" />
+      <div>
+        <p className="text-sm font-semibold leading-tight">{label}</p>
+        <p className={`text-[10px] ${active ? "text-white/60" : "text-ink-light/40"}`}>{sub}</p>
+      </div>
+    </button>
+  );
+}
+
+function DescribeMode({
+  prompt,
+  setPrompt,
+  selectedStyle,
+  setSelectedStyle,
+  inspirationName,
+  setInspirationName,
+  step,
+  error,
+  onGenerate,
+}: {
+  prompt: string;
+  setPrompt: (v: string) => void;
+  selectedStyle: string | null;
+  setSelectedStyle: (v: string | null) => void;
+  inspirationName: string | null;
+  setInspirationName: (v: string | null) => void;
+  step: "prompt" | "generating" | "result";
+  error: string | null;
+  onGenerate: () => void;
+}) {
+  return (
+    <>
+      {/* Prompt Area */}
+      <div className="rounded-3xl bg-white border border-soft-gray/50 p-6 mb-6">
+        <h2 className="text-lg font-semibold mb-1">Imagine ton set.</h2>
+        <p className="text-sm text-ink-light/40 mb-4">
+          Décris le design que tu souhaites. L&apos;IA va créer un set de 10 ongles adaptés à ton Nail Profile.
+        </p>
+
+        <textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Je veux un design inspiré d'un coucher de soleil sur la mer, élégant, bleu nuit, corail et quelques détails dorés. Les cinq ongles doivent être différents mais appartenir au même univers."
+          className="w-full h-32 p-4 rounded-2xl border border-soft-gray/80 bg-ivory/50 text-ink placeholder:text-ink-light/25 resize-none focus:outline-none focus:border-rose/30 focus:ring-4 focus:ring-rose/5 transition-all text-sm leading-relaxed"
+        />
+      </div>
+
+      {/* Quick Styles */}
+      <div className="mb-6">
+        <h3 className="text-sm font-semibold text-ink-light/60 mb-3">Styles rapides</h3>
+        <div className="flex flex-wrap gap-2">
+          {quickStyles.map((style) => (
+            <button
+              key={style.id}
+              onClick={() => setSelectedStyle(selectedStyle === style.id ? null : style.id)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                selectedStyle === style.id
+                  ? "bg-rose text-white shadow-md shadow-rose/15"
+                  : "bg-white border border-soft-gray/80 text-ink-light/60 hover:border-ink/15"
+              }`}
+            >
+              <style.icon className="w-3.5 h-3.5" />
+              {style.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Inspiration Import */}
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-ink-light/60 mb-3">Importer une inspiration</h3>
+        <div className="flex gap-3">
+          <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed border-soft-gray/80 rounded-xl text-sm font-medium text-ink-light/50 hover:border-ink/15 transition-all cursor-pointer">
+            <Upload className="w-4 h-4" />
+            Importer une image
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(event) => setInspirationName(event.target.files?.[0]?.name ?? null)}
+            />
+          </label>
+          <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed border-soft-gray/80 rounded-xl text-sm font-medium text-ink-light/50 hover:border-ink/15 transition-all cursor-pointer">
+            <Camera className="w-4 h-4" />
+            Prendre une photo
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="sr-only"
+              onChange={(event) => setInspirationName(event.target.files?.[0]?.name ?? null)}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => setInspirationName("Palette personnalisée")}
+            className={`flex items-center justify-center gap-2 px-4 py-3 bg-white border border-dashed rounded-xl text-sm font-medium transition-all ${
+              inspirationName === "Palette personnalisée"
+                ? "border-rose text-rose"
+                : "border-soft-gray/80 text-ink-light/50 hover:border-ink/15"
+            }`}
+            aria-label="Choisir une palette"
+          >
+            <Palette className="w-4 h-4" />
+          </button>
+        </div>
+        {inspirationName && (
+          <p className="text-xs text-rose mt-3">Inspiration sélectionnée : {inspirationName}</p>
+        )}
+      </div>
+
+      {/* AI hint */}
+      <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-4 mb-6 flex items-start gap-3">
+        <Zap className="w-4 h-4 text-rose mt-0.5 flex-shrink-0" />
+        <p className="text-xs text-ink-light/50 leading-relaxed">
+          <span className="font-medium text-rose">Astuce IA :</span> Tu peux décrire une ambiance, une palette de couleurs, une texture, un thème. L&apos;IA comprend le langage naturel.
+        </p>
+      </div>
+
+      {/* Generate button */}
+      <button
+        onClick={onGenerate}
+        disabled={(!prompt.trim() && !selectedStyle) || step === "generating"}
+        className={`w-full flex items-center justify-center gap-3 px-6 py-5 rounded-2xl text-lg font-semibold transition-all ${
+          (prompt.trim() || selectedStyle) && step !== "generating"
+            ? "bg-rose text-white hover:bg-rose-dark shadow-lg shadow-rose/15"
+            : "bg-ink/5 text-ink-light/30 cursor-not-allowed"
+        }`}
+      >
+        <ScanLine className="w-5 h-5" />
+        Créer mon design
+      </button>
+
+      {error && (
+        <p className="mt-4 text-sm text-rose text-center">{error}</p>
+      )}
+    </>
+  );
+}
+
+function DrawMode() {
+  return (
+    <div>
+      <div className="rounded-2xl bg-rose-light/5 border border-rose-light/20 p-4 mb-6 flex items-start gap-3">
+        <Brush className="w-4 h-4 text-rose mt-0.5 flex-shrink-0" />
+        <div>
+          <p className="text-sm font-medium text-rose">Studio de dessin</p>
+          <p className="text-xs text-ink-light/50 mt-0.5">
+            Peins chaque ongle à la main, applique des motifs, choisis tes couleurs.
+            Sauvegarde pour voir le résultat sur le set complet.
+          </p>
+        </div>
+      </div>
+      <NailStudio />
+    </div>
   );
 }

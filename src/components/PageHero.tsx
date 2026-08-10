@@ -10,6 +10,7 @@ export const visualAssets = {
   blueNails: "/images/nails-blue.jpg",
   jewelryHands: "/images/hands-jewelry.jpg",
   festiveHands: "/images/hands-festive.jpg",
+  handVideo: "/hand-video.mp4",
 };
 
 type PageHeroProps = {

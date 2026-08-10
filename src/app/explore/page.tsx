@@ -19,6 +19,7 @@ import {
   Moon,
   Radio,
   CalendarDays,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -46,6 +47,7 @@ const collections = [
 
 export default function ExplorePage() {
   const [activeCollection, setActiveCollection] = useState("Tendances");
+  const [sortBy, setSortBy] = useState<"populaire" | "recent" | "prix-asc" | "prix-desc">("populaire");
   const collectionTags: Record<string, string[]> = {
     Mariage: ["wedding"],
     Minimal: ["minimal"],
@@ -57,12 +59,29 @@ export default function ExplorePage() {
     Y2K: ["y2k"],
     Saisons: ["spring", "autumn", "summer"],
   };
-  const visibleItems =
+  const visibleItems = (
     activeCollection === "Tendances"
       ? marketplaceItems
       : marketplaceItems.filter((item) =>
           collectionTags[activeCollection]?.some((tag) => item.tags.includes(tag))
-        );
+        )
+  )
+    .slice()
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "recent":
+          return 0;
+        case "prix-asc":
+          return parseFloat(a.price.replace(",", ".").replace("€", "").trim()) -
+            parseFloat(b.price.replace(",", ".").replace("€", "").trim());
+        case "prix-desc":
+          return parseFloat(b.price.replace(",", ".").replace("€", "").trim()) -
+            parseFloat(a.price.replace(",", ".").replace("€", "").trim());
+        case "populaire":
+        default:
+          return b.views - a.views;
+      }
+    });
 
   return (
     <AppShell>
@@ -82,22 +101,44 @@ export default function ExplorePage() {
           <h1 className="text-2xl font-bold text-ink">Explorer les créations</h1>
         </div>
 
-        {/* Collections scroll */}
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-8 -mx-6 px-6 scrollbar-none">
-          {collections.map((col) => (
-            <button
-              key={col.name}
-              onClick={() => setActiveCollection(col.name)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
-                activeCollection === col.name
-                  ? "bg-rose text-white shadow-md shadow-rose/15"
-                  : "bg-white border border-soft-gray/80 text-ink-light/60 hover:border-ink/15"
-              }`}
-            >
-              <col.icon className="w-3.5 h-3.5" />
-              {col.name}
-            </button>
-          ))}
+        {/* Collections + sort (wraps on small screens) */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="-mx-1 flex flex-wrap items-center gap-2 px-1">
+            {collections.map((col) => (
+              <button
+                key={col.name}
+                onClick={() => setActiveCollection(col.name)}
+                className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                  activeCollection === col.name
+                    ? "bg-rose text-white shadow-md shadow-rose/15"
+                    : "bg-white border border-soft-gray/80 text-ink-light/60 hover:border-ink/15"
+                }`}
+              >
+                <col.icon className="h-3.5 w-3.5" />
+                {col.name}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort-by" className="text-xs font-medium text-ink-light/50">
+              Trier par
+            </label>
+            <div className="relative">
+              <select
+                id="sort-by"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="appearance-none rounded-full border border-soft-gray/80 bg-white py-2 pl-4 pr-9 text-sm font-medium text-ink focus:border-rose focus:outline-none"
+              >
+                <option value="populaire">Les plus populaires</option>
+                <option value="recent">Récents</option>
+                <option value="prix-asc">Prix croissant</option>
+                <option value="prix-desc">Prix décroissant</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-light/40" />
+            </div>
+          </div>
         </div>
 
         {/* Grid */}

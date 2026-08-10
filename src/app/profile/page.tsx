@@ -18,6 +18,7 @@ import Link from "next/link";
 
 const sections = [
   { label: "Mes mains", icon: ScanLine, href: "/canvas", desc: "Voir mes 10 gabarits" },
+  { label: "Nail Profile 3D", icon: ScanFace, href: "/profile/3d", desc: "Modèle 3D vivant de ton ongle" },
   { label: "Mes designs", icon: Palette, href: "/my-creations", desc: "4 créations" },
   { label: "Mes commandes", icon: ShoppingBag, href: "/orders", desc: "3 commandes" },
   { label: "Mes favoris", icon: Heart, href: "/explore", desc: "3 favoris" },

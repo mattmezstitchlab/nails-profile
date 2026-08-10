@@ -2,15 +2,72 @@ import { visualAssets } from "@/components/PageHero";
 import { CATALOG, type GeneratedItem } from "@/data/catalog";
 
 /**
- * Catalogue de la marketplace.
+ * Catalogue de la marketplace AIME® — L'ongle que l'on aime.
  *
- * Combine 6 items fondateurs (mis en avant en haut de la grille)
- * et 1 200+ items générés paramétriquement par src/data/catalog.ts.
+ * Combine 6 items fondateurs (mis en avant en haut de la grille) et
+ * 950+ items générés paramétriquement par src/data/catalog.ts.
  *
- * Pour scaler à 20 000+ : changer CATALOG_LIMIT dans src/data/catalog.ts.
+ * Chaque item peut avoir une image éditoriale pré-générée dans
+ * public/catalog/{id}.jpg. Si absente, on retombe sur le gradient
+ * dérivé de la palette + le motif SVG (DesignPattern).
  */
 
-export type MarketplaceItem = GeneratedItem;
+export type MarketplaceItem = GeneratedItem & { imagePath?: string };
+
+/* Mapping ID → image éditoriale pré-générée. Le path est résolu
+   côté serveur (Next.js public/) et servi en /catalog/{file}. */
+
+const FEATURED_IMAGE: Record<string, string> = {
+  "featured-sunset-ocean": "/catalog/featured-sunset-ocean.jpg",
+  "featured-wedding-pearl": "/catalog/featured-wedding-pearl.jpg",
+  "featured-chrome-noir": "/catalog/featured-chrome-noir.jpg",
+  "featured-cherry-blossom": "/catalog/featured-cherry-blossom.jpg",
+  "featured-gothic-velvet": "/catalog/featured-gothic-velvet.jpg",
+  "featured-y2k-pop": "/catalog/featured-y2k-pop.jpg",
+};
+
+/* Mapping style → image éditoriale de fallback (les 8 visuels existants).
+   Utilisé quand un item généré n'a pas encore sa propre image. */
+const STYLE_FALLBACK: Record<string, string> = {
+  minimal: visualAssets.editorialHands,
+  french: visualAssets.editorialHands,
+  chrome: visualAssets.blackNails,
+  luxury: visualAssets.editorialHands,
+  floral: visualAssets.artHands,
+  gothic: visualAssets.blackNails,
+  kawaii: visualAssets.festiveHands,
+  y2k: visualAssets.blueNails,
+  nature: visualAssets.yellowHand,
+  wedding: visualAssets.weddingHands,
+  art: visualAssets.artHands,
+  abstract: visualAssets.artHands,
+  tribal: visualAssets.blackNails,
+  celestial: visualAssets.blueNails,
+  tropical: visualAssets.festiveHands,
+  vintage: visualAssets.weddingHands,
+  geometric: visualAssets.artHands,
+  ombre: visualAssets.festiveHands,
+  glitter: visualAssets.blueNails,
+  matte: visualAssets.blackNails,
+  baroque: visualAssets.editorialHands,
+  cyberpunk: visualAssets.blackNails,
+  deco: visualAssets.editorialHands,
+  "op-art": visualAssets.artHands,
+  streetwear: visualAssets.festiveHands,
+  ethno: visualAssets.editorialHands,
+  vaporwave: visualAssets.blueNails,
+  nineties: visualAssets.festiveHands,
+  "neo-gothic": visualAssets.blackNails,
+  memphis: visualAssets.festiveHands,
+  monochrome: visualAssets.editorialHands,
+  mosaic: visualAssets.festiveHands,
+  watercolor: visualAssets.yellowHand,
+  sculptural: visualAssets.editorialHands,
+  futuristic: visualAssets.blackNails,
+  asiatique: visualAssets.yellowHand,
+  botanical: visualAssets.yellowHand,
+  rustic: visualAssets.editorialHands,
+};
 
 export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
@@ -31,6 +88,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["luxury", "ocean", "sunset"],
     finish: "satin" as const,
     createdAt: "2026-05-15T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-sunset-ocean"],
   },
   {
     id: "featured-wedding-pearl",
@@ -50,6 +108,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["wedding", "pearl", "romantic"],
     finish: "satin" as const,
     createdAt: "2026-06-01T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-wedding-pearl"],
   },
   {
     id: "featured-chrome-noir",
@@ -69,6 +128,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["chrome", "minimal", "black"],
     finish: "chrome" as const,
     createdAt: "2026-04-10T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-chrome-noir"],
   },
   {
     id: "featured-cherry-blossom",
@@ -88,6 +148,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["floral", "spring", "pink"],
     finish: "glossy" as const,
     createdAt: "2026-03-20T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-cherry-blossom"],
   },
   {
     id: "featured-gothic-velvet",
@@ -107,6 +168,7 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["gothic", "velvet", "dark"],
     finish: "matte" as const,
     createdAt: "2026-02-15T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-gothic-velvet"],
   },
   {
     id: "featured-y2k-pop",
@@ -126,10 +188,17 @@ export const FEATURED_ITEMS: MarketplaceItem[] = [
     tags: ["y2k", "pop", "holographic"],
     finish: "glitter" as const,
     createdAt: "2026-01-05T10:00:00.000Z",
+    imagePath: FEATURED_IMAGE["featured-y2k-pop"],
   },
 ];
 
-export const ALL_ITEMS: MarketplaceItem[] = [...FEATURED_ITEMS, ...CATALOG];
+export const ALL_ITEMS: MarketplaceItem[] = [
+  ...FEATURED_ITEMS,
+  ...CATALOG.map((item) => ({
+    ...item,
+    imagePath: STYLE_FALLBACK[item.style] ?? visualAssets.editorialHands,
+  })),
+];
 
 export function getMarketplaceItem(id: string): MarketplaceItem | null {
   return ALL_ITEMS.find((item) => item.id === id) ?? null;
@@ -137,8 +206,4 @@ export function getMarketplaceItem(id: string): MarketplaceItem | null {
 
 export function getCreatorItems(creator: string): MarketplaceItem[] {
   return ALL_ITEMS.filter((item) => item.creator === creator);
-}
-
-export function getAllCreators(): string[] {
-  return Array.from(new Set(ALL_ITEMS.map((item) => item.creator))).sort();
 }

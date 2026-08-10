@@ -432,11 +432,21 @@ function ItemCard({ item }: { item: MarketplaceItem }) {
       className="group rounded-3xl bg-white border border-soft-gray/50 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
     >
       <div className="aspect-[4/3] relative overflow-hidden">
-        <DesignPattern
-          pattern={item.pattern}
-          colors={item.palette3}
-          className="absolute inset-0"
-        />
+        {item.imagePath ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.imagePath}
+            alt={item.name}
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <DesignPattern
+            pattern={item.pattern}
+            colors={item.palette3}
+            className="absolute inset-0"
+          />
+        )}
         <div className="absolute inset-0 bg-black/10" />
         <div className="absolute top-3 left-3">
           <span className="px-2 py-0.5 rounded-full bg-white/85 backdrop-blur text-[10px] font-semibold uppercase tracking-wider text-ink">

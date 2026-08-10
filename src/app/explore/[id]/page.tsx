@@ -90,25 +90,34 @@ export default function ProductDetailPage({ params }: PageProps) {
         </div>
 
         {/* Hero Design */}
-        <div
-          className="rounded-3xl aspect-[16/10] mb-6 flex items-center justify-center relative overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${item.palette3[0]} 0%, ${item.palette3[1]} 50%, ${item.palette3[2]} 100%)`,
-          }}
-        >
-          <div className="text-center text-white drop-shadow-lg">
-            <p className="text-white/80 text-xs uppercase tracking-widest">{item.style}</p>
-            <h1 className="text-4xl font-bold mt-2">{item.name}</h1>
+        {item.imagePath ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.imagePath}
+            alt={item.name}
+            className="w-full rounded-3xl aspect-[16/10] object-cover mb-6"
+          />
+        ) : (
+          <div
+            className="rounded-3xl aspect-[16/10] mb-6 flex items-center justify-center relative overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${item.palette3[0]} 0%, ${item.palette3[1]} 50%, ${item.palette3[2]} 100%)`,
+            }}
+          >
+            <div className="text-center text-white drop-shadow-lg">
+              <p className="text-white/80 text-xs uppercase tracking-widest">{item.style}</p>
+              <h1 className="text-4xl font-bold mt-2">{item.name}</h1>
+            </div>
+            <div className="absolute bottom-4 left-4 flex gap-3 text-white/90 text-sm">
+              <span className="flex items-center gap-1">
+                <Eye className="w-3.5 h-3.5" /> {item.views.toLocaleString("fr-FR")}
+              </span>
+              <span className="flex items-center gap-1">
+                <ShoppingBag className="w-3.5 h-3.5" /> {item.orders}
+              </span>
+            </div>
           </div>
-          <div className="absolute bottom-4 left-4 flex gap-3 text-white/90 text-sm">
-            <span className="flex items-center gap-1">
-              <Eye className="w-3.5 h-3.5" /> {item.views.toLocaleString("fr-FR")}
-            </span>
-            <span className="flex items-center gap-1">
-              <ShoppingBag className="w-3.5 h-3.5" /> {item.orders}
-            </span>
-          </div>
-        </div>
+        )}
 
         {/* Studio + price */}
         <div className="flex items-center gap-3 mb-6 p-4 rounded-2xl bg-white border border-soft-gray/50">

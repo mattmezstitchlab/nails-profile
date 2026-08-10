@@ -59,7 +59,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         eyebrow={`DESIGN / ${item.style.toUpperCase()}`}
         title="Une création. Dix façons de la porter."
         description="Ce design n'est pas une image figée. Il s'adapte à ton Nail Profile, doigt par doigt, avant de devenir ton set."
-        image={item.image}
+        image={item.palette3[0]}
         imageAlt={`${item.name} — ${item.style} par ${item.creator}`}
         label={item.name.toUpperCase()}
         meta="Essayable sur ton profil"
@@ -90,7 +90,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         <div
           className="rounded-3xl aspect-[16/10] mb-6 flex items-center justify-center relative overflow-hidden"
           style={{
-            background: `linear-gradient(135deg, ${item.palette[0]} 0%, ${item.palette[1]} 50%, ${item.palette[2]} 100%)`,
+            background: `linear-gradient(135deg, ${item.palette3[0]} 0%, ${item.palette3[1]} 50%, ${item.palette3[2]} 100%)`,
           }}
         >
           <div className="text-center text-white drop-shadow-lg">
@@ -153,7 +153,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                 Palette
               </p>
               <div className="flex gap-2">
-                {item.palette.map((color, i) => (
+                {item.palette3.map((color, i) => (
                   <div key={i} className="flex-1">
                     <div
                       className="aspect-square rounded-xl border border-ink/10"

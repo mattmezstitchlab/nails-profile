@@ -1,146 +1,138 @@
 import { visualAssets } from "@/components/PageHero";
+import { CATALOG, type GeneratedItem } from "@/data/catalog";
 
 /**
  * Catalogue de la marketplace.
- * Pour l'instant : 6 items fondateurs. Sera étendu à 1000+ via
- * une approche paramétrique (style × palette × forme × créateur).
+ *
+ * Combine 6 items fondateurs (mis en avant en haut de la grille)
+ * et 1 200+ items générés paramétriquement par src/data/catalog.ts.
+ *
+ * Pour scaler à 20 000+ : changer CATALOG_LIMIT dans src/data/catalog.ts.
  */
 
-export type MarketplaceItem = {
-  id: string;
-  name: string;
-  creator: string;
-  style: string;
-  price: string; // formaté FR "49,90 €"
-  orders: number;
-  views: number;
-  tone: string; // couleur primaire hex
-  image: string; // visuel éditorial
-  description: string;
-  tags: string[];
-  palette: string[]; // 3 couleurs hex
-  finish: "glossy" | "matte" | "satin" | "chrome" | "glitter";
-};
+export type MarketplaceItem = GeneratedItem;
 
-export const MARKETPLACE_ITEMS: MarketplaceItem[] = [
+export const FEATURED_ITEMS: MarketplaceItem[] = [
   {
-    id: "set1",
+    id: "featured-sunset-ocean",
     name: "Sunset Ocean",
     creator: "Camille Dubois",
-    style: "Luxury",
+    style: "luxury" as const,
+    palette: "bordeaux" as const,
+    shape: "almond" as const,
     price: "49,90 €",
     orders: 89,
     views: 1240,
     tone: "#a7475c",
-    image: visualAssets.editorialHands,
+    palette3: ["#a7475c", "#22304a", "#c4545f"],
     description:
       "Inspiré d'un coucher de soleil sur la mer, élégant, bleu nuit, corail et quelques détails dorés. Les cinq designs sont différents mais appartiennent au même univers visuel.",
     tags: ["luxury", "ocean", "sunset"],
-    palette: ["#a7475c", "#22304a", "#c4545f"],
-    finish: "satin",
+    finish: "satin" as const,
+    createdAt: "2026-05-15T10:00:00.000Z",
   },
   {
-    id: "set2",
+    id: "featured-wedding-pearl",
     name: "Wedding Pearl",
     creator: "Léa Moreau",
-    style: "Wedding",
+    style: "wedding" as const,
+    palette: "nude" as const,
+    shape: "oval" as const,
     price: "59,90 €",
     orders: 56,
     views: 890,
     tone: "#e4c9c3",
-    image: visualAssets.weddingHands,
+    palette3: ["#e4c9c3", "#f7e8e1", "#d4a89a"],
     description:
       "Manucure de mariage en perle sheer, base nude laiteuse avec shimmer délicat. Idéal pour les mariées et demoiselles d'honneur.",
     tags: ["wedding", "pearl", "romantic"],
-    palette: ["#e4c9c3", "#f7e8e1", "#d4a89a"],
-    finish: "satin",
+    finish: "satin" as const,
+    createdAt: "2026-06-01T10:00:00.000Z",
   },
   {
-    id: "set3",
+    id: "featured-chrome-noir",
     name: "Chrome Noir",
     creator: "Sofia Chen",
-    style: "Chrome",
+    style: "chrome" as const,
+    palette: "noir" as const,
+    shape: "coffin" as const,
     price: "54,90 €",
     orders: 134,
     views: 2100,
     tone: "#242424",
-    image: visualAssets.blackNails,
+    palette3: ["#242424", "#0a0a0a", "#3a3a3a"],
     description:
       "Chrome noir miroir sur base glossy, finition futuriste et minimaliste. Pour celles qui veulent un look avant-gardiste.",
     tags: ["chrome", "minimal", "black"],
-    palette: ["#242424", "#0a0a0a", "#3a3a3a"],
-    finish: "chrome",
+    finish: "chrome" as const,
+    createdAt: "2026-04-10T10:00:00.000Z",
   },
   {
-    id: "set4",
+    id: "featured-cherry-blossom",
     name: "Cherry Blossom",
     creator: "Camille Dubois",
-    style: "Floral",
+    style: "floral" as const,
+    palette: "rose" as const,
+    shape: "oval" as const,
     price: "44,90 €",
     orders: 42,
     views: 760,
     tone: "#e5a8b9",
-    image: visualAssets.artHands,
+    palette3: ["#e5a8b9", "#f3d3c4", "#c4545f"],
     description:
       "Fleurs de cerisier peintes à la main sur base rose poudrée. Inspiration botanique et printanière.",
     tags: ["floral", "spring", "pink"],
-    palette: ["#e5a8b9", "#f3d3c4", "#c4545f"],
-    finish: "glossy",
+    finish: "glossy" as const,
+    createdAt: "2026-03-20T10:00:00.000Z",
   },
   {
-    id: "set5",
+    id: "featured-gothic-velvet",
     name: "Gothic Velvet",
     creator: "Camille Dubois",
-    style: "Gothic",
+    style: "gothic" as const,
+    palette: "bordeaux" as const,
+    shape: "coffin" as const,
     price: "52,90 €",
     orders: 78,
     views: 1450,
     tone: "#3d2139",
-    image: visualAssets.blackNails,
+    palette3: ["#3d2139", "#1a0f1a", "#5a2d4a"],
     description:
       "Velours mat bordeaux profond avec accents noirs oxblood. Esthétique sombre et romantique.",
     tags: ["gothic", "velvet", "dark"],
-    palette: ["#3d2139", "#1a0f1a", "#5a2d4a"],
-    finish: "matte",
+    finish: "matte" as const,
+    createdAt: "2026-02-15T10:00:00.000Z",
   },
   {
-    id: "set6",
+    id: "featured-y2k-pop",
     name: "Y2K Pop",
     creator: "Sofia Chen",
-    style: "Y2K",
+    style: "y2k" as const,
+    palette: "cyan" as const,
+    shape: "ballerina" as const,
     price: "39,90 €",
     orders: 210,
     views: 3200,
     tone: "#6fc2c7",
-    image: visualAssets.blueNails,
+    palette3: ["#6fc2c7", "#e62e6b", "#9b59ff"],
     description:
       "Holographique cyan et magenta, glitter Y2K et motifs papillons. Retour vers 2000 avec une twist moderne.",
     tags: ["y2k", "pop", "holographic"],
-    palette: ["#6fc2c7", "#e62e6b", "#9b59ff"],
-    finish: "glitter",
+    finish: "glitter" as const,
+    createdAt: "2026-01-05T10:00:00.000Z",
   },
 ];
 
+export const ALL_ITEMS: MarketplaceItem[] = [...FEATURED_ITEMS, ...CATALOG];
+
 export function getMarketplaceItem(id: string): MarketplaceItem | null {
-  return MARKETPLACE_ITEMS.find((item) => item.id === id) ?? null;
+  return ALL_ITEMS.find((item) => item.id === id) ?? null;
 }
 
 export function getCreatorItems(creator: string): MarketplaceItem[] {
-  return MARKETPLACE_ITEMS.filter((item) => item.creator === creator);
+  return ALL_ITEMS.filter((item) => item.creator === creator);
 }
 
-export const CREATORS = Array.from(
-  new Set(MARKETPLACE_ITEMS.map((item) => item.creator))
-).map((name) => {
-  const items = getCreatorItems(name);
-  return {
-    name,
-    initials: name
-      .split(" ")
-      .map((n) => n[0])
-      .join(""),
-    sets: items.length,
-    tone: items[0]?.tone ?? "#888",
-    items,
-  };
-});
+export function getAllCreators(): string[] {
+  return Array.from(new Set(ALL_ITEMS.map((item) => item.creator))).sort();
+}

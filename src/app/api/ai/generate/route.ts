@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { generateText } from "ai";
+import { GoogleGenAI, Type } from "@google/genai";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -47,9 +47,7 @@ const STYLE_KEYWORDS: Record<string, string> = {
 
 /**
  * Build a single nail design prompt for one finger.
- * The model is asked to respond as JSON describing the design's visual specs
- * (palette, motif, finish) so the result can be rendered consistently and
- * later applied to the parametric 3D mesh.
+ * The model is asked to respond as JSON describing the design's visual specs.
  */
 function buildNailPrompt(opts: {
   index: number;
@@ -73,9 +71,7 @@ function buildNailPrompt(opts: {
     `Set direction: ${prompt}.`,
     styleLine,
     skinLine,
-    `Reply with strict JSON only, no markdown, matching this schema:`,
-    `{"name": string, "palette": [string, string, string], "motif": string, "finish": "glossy" | "matte" | "satin" | "chrome" | "glitter", "description": string, "swatch": "#hexcolor"}`,
-    `The palette must reuse 2 of the 3 colors from nails 1-${Math.max(1, index)} in this set so all 10 nails feel like one collection. Vary the motif and composition per finger.`,
+    `The palette must reuse 2 of the 3 colors from the previous nails in this set so all 10 nails feel like one collection. Vary the motif and composition per finger.`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -105,41 +101,6 @@ function deterministicFallback(prompt: string, style?: string) {
   });
 }
 
-type GeneratedNailDesign = {
-  name?: string;
-  palette?: string[];
-  motif?: string;
-  finish?: string;
-  description?: string;
-  swatch?: string;
-};
-
-/**
- * Parse the model output as a single JSON object.
- * Tolerant to fenced code blocks and minor noise.
- */
-function parseJsonNailDesign(text: string): GeneratedNailDesign | null {
-  const cleaned = text
-    .trim()
-    .replace(/^```(?:json)?/i, "")
-    .replace(/```$/, "")
-    .trim();
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    const firstBrace = cleaned.indexOf("{");
-    const lastBrace = cleaned.lastIndexOf("}");
-    if (firstBrace >= 0 && lastBrace > firstBrace) {
-      try {
-        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  }
-}
-
 export async function POST(request: NextRequest) {
   let body: GenerateBody;
   try {
@@ -155,7 +116,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.AI_GATEWAY_API_KEY ?? process.env.GOOGLE_AI_API_KEY ?? process.env.GEMINI_API_KEY;
+  const apiKey =
+    process.env.GOOGLE_AI_API_KEY ?? process.env.GEMINI_API_KEY ?? process.env.AI_GATEWAY_API_KEY;
   const total = body.nailProfile?.nails?.length ?? 10;
   const nails = body.nailProfile?.nails ?? [];
 
@@ -164,7 +126,7 @@ export async function POST(request: NextRequest) {
     const designs = deterministicFallback(body.prompt, body.style);
     return Response.json({
       mode: "fallback",
-      reason: "AI_GATEWAY_API_KEY not set; using deterministic palette",
+      reason: "GOOGLE_AI_API_KEY not set; using deterministic palette",
       set: {
         name: inferSetName(body.prompt, body.style),
         nails: designs.map((d, i) => ({
@@ -176,10 +138,16 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // We ask the model to return structured JSON for each finger.
-    // The AI Gateway resolves to whatever provider is configured; we ask for
-    // a Gemini Flash model by default (cheap + supports text output reliably).
-    const collectedDesigns: GeneratedNailDesign[] = [];
+    const ai = new GoogleGenAI({ apiKey });
+    const collectedDesigns: Array<{
+      name?: string;
+      palette?: string[];
+      motif?: string;
+      finish?: string;
+      description?: string;
+      swatch?: string;
+    }> = [];
+
     for (let i = 0; i < total; i++) {
       const prompt = buildNailPrompt({
         index: i,
@@ -190,12 +158,44 @@ export async function POST(request: NextRequest) {
         skinTone: body.nailProfile?.skinTone,
       });
       try {
-        const { text } = await generateText({
-          model: "google/gemini-2.5-flash",
-          prompt,
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                name: { type: Type.STRING, description: "Short design name for this nail" },
+                palette: {
+                  type: Type.ARRAY,
+                  items: { type: Type.STRING },
+                  description: "3 hex colors that compose the design, e.g. #e62e6b",
+                },
+                motif: { type: Type.STRING, description: "What is depicted on the nail" },
+                finish: {
+                  type: Type.STRING,
+                  description: "One of: glossy, matte, satin, chrome, glitter",
+                },
+                description: { type: Type.STRING, description: "1-2 sentence editorial description" },
+                swatch: { type: Type.STRING, description: "Primary hex color, e.g. #e62e6b" },
+              },
+              required: ["palette", "finish", "description", "swatch"],
+            },
+          },
         });
-        const parsed = parseJsonNailDesign(text);
-        if (parsed) collectedDesigns.push(parsed);
+        const text = response.text;
+        if (text) {
+          try {
+            const parsed = JSON.parse(text);
+            collectedDesigns.push(parsed);
+          } catch {
+            console.error(`[ai/generate] nail ${i} returned non-JSON:`, text.slice(0, 200));
+            collectedDesigns.push({});
+          }
+        } else {
+          collectedDesigns.push({});
+        }
       } catch (err) {
         console.error(`[ai/generate] nail ${i} failed`, err);
         collectedDesigns.push({});
